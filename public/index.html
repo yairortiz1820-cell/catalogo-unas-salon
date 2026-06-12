@@ -34,31 +34,49 @@
 
 <!-- HERO -->
 <section class="hero" id="inicio">
-  <div class="hero-bg"></div>
-  <div class="hero-orb hero-orb-1"></div>
-  <div class="hero-orb hero-orb-2"></div>
-  <div class="hero-orb hero-orb-3"></div>
-
-  <!-- Imagen lateral decorativa -->
-  <div class="hero-img-wrap">
-    <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=90" alt="Uñas premium" class="hero-img">
-    <div class="hero-img-badge">
-      <span class="badge-num">500+</span>
-      <span class="badge-txt">Clientas felices</span>
-    </div>
+  <!-- Fondo: uñas góticas largas -->
+  <div class="hero-fullbg">
+    <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=1920&q=95&fit=crop" alt="Uñas acrílicas góticas" class="hero-fullbg-img" id="heroBgImg">
+    <div class="hero-fullbg-overlay"></div>
+    <!-- Partículas ornamentales -->
+    <div class="hero-particles" id="heroParticles"></div>
   </div>
 
-  <div class="hero-content">
+  <!-- Líneas ornamentales góticas -->
+  <div class="gothic-lines">
+    <div class="gothic-line gl-left"></div>
+    <div class="gothic-line gl-right"></div>
+    <div class="gothic-corner gc-tl">✦</div>
+    <div class="gothic-corner gc-tr">✦</div>
+    <div class="gothic-corner gc-bl">✦</div>
+    <div class="gothic-corner gc-br">✦</div>
+  </div>
+
+  <div class="hero-content-full">
     <div class="hero-eyebrow">
       <span class="eyebrow-line"></span>
-      Arte & Elegancia en cada detalle
+      Arte Gótico · Elegancia Oscura
       <span class="eyebrow-line"></span>
     </div>
-    <h1>Tu belleza<br>merece lo<br><span class="hero-italic">extraordinario</span></h1>
-    <p class="hero-sub">Diseños únicos, materiales de calidad premium y un equipo apasionado por convertir tus uñas en una obra de arte.</p>
+    <h1 class="hero-title-gothic">
+      <span class="ht-top">Glamour</span>
+      <span class="ht-main"><em>Nails</em></span>
+      <span class="ht-sub-title">Premium Salon</span>
+    </h1>
+    <p class="hero-sub">Diseños góticos exclusivos, acrílicas largas de alta gama.<br>Arte oscuro para manos extraordinarias.</p>
+
+    <!-- Stats flotantes -->
+    <div class="hero-stats-row">
+      <div class="hstat"><span class="hstat-n">500+</span><span class="hstat-l">Clientas</span></div>
+      <div class="hstat-div">|</div>
+      <div class="hstat"><span class="hstat-n">4.9★</span><span class="hstat-l">Calificación</span></div>
+      <div class="hstat-div">|</div>
+      <div class="hstat"><span class="hstat-n">6</span><span class="hstat-l">Servicios</span></div>
+    </div>
+
     <div class="hero-actions">
-      <a href="#servicios" class="btn-gold">Explorar servicios</a>
-      <a href="#contacto" class="btn-ghost">Agendar cita ↗</a>
+      <a href="#servicios" class="btn-gold">Ver catálogo</a>
+      <a href="#contacto" class="btn-ghost" id="heroWA">💬 WhatsApp</a>
     </div>
   </div>
 

@@ -6,10 +6,41 @@ document.addEventListener('DOMContentLoaded', () => {
   initCursor();
   initNavbar();
   initReveal();
+  initParticles();
+  initHeroParallax();
   cargarServicios();
   cargarResenas();
   setWALinks();
 });
+
+/* ── PARTÍCULAS ── */
+function initParticles() {
+  const container = document.getElementById('heroParticles');
+  if (!container) return;
+  for (let i = 0; i < 35; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      width:${Math.random()*2+1}px;
+      height:${Math.random()*2+1}px;
+      animation-duration:${Math.random()*12+8}s;
+      animation-delay:${Math.random()*10}s;
+      opacity:${Math.random()*.5+.1};
+    `;
+    container.appendChild(p);
+  }
+}
+
+/* ── PARALLAX HERO ── */
+function initHeroParallax() {
+  const img = document.getElementById('heroBgImg');
+  if (!img) return;
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (y < window.innerHeight) img.style.transform = `scale(1.05) translateY(${y * 0.25}px)`;
+  }, { passive: true });
+}
 
 /* ── PRELOADER ── */
 function initPreloader() {
