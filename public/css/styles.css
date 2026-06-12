@@ -303,6 +303,70 @@ footer{background:var(--carbon);border-top:1px solid rgba(255,255,255,.05);paddi
 .btn-rose-sm{background:var(--rose);color:white;padding:.65rem 1.5rem;border:none;border-radius:2px;font-size:.8rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;transition:background .2s;}
 .btn-rose-sm:hover{background:var(--rose-deep);}
 
+/* ── DESCUENTO FLOTANTE ── */
+.descuento-flotante{position:fixed;top:50%;z-index:850;transform:translateY(-50%);writing-mode:vertical-rl;cursor:default;transition:transform .3s var(--ease);}
+.descuento-flotante.izq{left:0;transform:translateY(-50%) rotate(180deg);}
+.descuento-flotante.der{right:0;transform:translateY(-50%);}
+.descuento-flotante:hover{transform:translateY(-50%) scale(1.04);}
+.descuento-flotante.der:hover{transform:translateY(-50%) scale(1.04);}
+.desc-inner{background:linear-gradient(180deg,var(--rose-deep),var(--rose));padding:1.2rem .6rem;display:flex;flex-direction:column;align-items:center;gap:.2rem;border-radius:0 6px 6px 0;box-shadow:4px 0 20px rgba(196,30,91,.3);}
+.descuento-flotante.izq .desc-inner{border-radius:6px 0 0 6px;box-shadow:-4px 0 20px rgba(196,30,91,.3);}
+.desc-pct{font-family:var(--font-serif);font-size:1.3rem;font-weight:800;color:var(--champagne);line-height:1;}
+.desc-txt{font-size:.55rem;letter-spacing:3px;color:white;font-weight:700;}
+.desc-sub{font-size:.5rem;color:rgba(255,255,255,.7);letter-spacing:1px;margin-top:.3rem;}
+.desc-code{font-size:.48rem;background:rgba(0,0,0,.25);color:var(--champagne);padding:.15rem .3rem;border-radius:2px;letter-spacing:1px;margin-top:.2rem;}
+
+/* ── RESERVAR ── */
+.reservar-section{background:var(--negro);padding:4rem 2rem;}
+.reservar-card{background:linear-gradient(135deg,rgba(196,30,91,.12),rgba(212,175,55,.06));border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:3rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;}
+.reservar-titulo{font-family:var(--font-serif);font-size:clamp(1.8rem,3vw,2.5rem);font-weight:700;color:white;line-height:1.2;margin-top:.5rem;}
+.reservar-form{display:flex;flex-direction:column;gap:.8rem;}
+.res-input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.85rem 1.1rem;color:white;font-family:var(--font-sans);font-size:.88rem;outline:none;transition:border .25s;}
+.res-input::placeholder{color:rgba(255,255,255,.3);}
+.res-input option{background:#1a1a1a;color:white;}
+.res-input:focus{border-color:var(--champagne);}
+.btn-wa-reserva{display:flex;align-items:center;justify-content:center;gap:.6rem;padding:1rem;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border-radius:4px;font-size:.88rem;font-weight:700;text-decoration:none;transition:opacity .25s,transform .25s;margin-top:.3rem;}
+.btn-wa-reserva:hover{opacity:.9;transform:translateY(-2px);}
+
+/* ── CATÁLOGO ajuste ── */
+.catalogo-section{background:var(--gris-suave);padding:5rem 2rem;}
+.catalogo-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;gap:1rem;flex-wrap:wrap;}
+.filtros-pills{display:flex;flex-wrap:wrap;gap:.5rem;}
+
+/* ── RESEÑAS compactas ── */
+.resenas-section{background:var(--negro);padding:5rem 2rem;}
+.resenas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resena-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:1.4rem;transition:border-color .3s,transform .3s;}
+.resena-card:hover{border-color:rgba(212,175,55,.2);transform:translateY(-3px);}
+.resena-stars{color:var(--champagne);font-size:.85rem;margin-bottom:.7rem;letter-spacing:1px;}
+.resena-texto{font-family:var(--font-serif);font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.7;font-style:italic;margin-bottom:1rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.resena-autor{display:flex;align-items:center;gap:.6rem;}
+.resena-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--rose-deep));display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);color:white;font-weight:700;font-size:.82rem;flex-shrink:0;}
+.resena-nombre{color:white;font-weight:600;font-size:.82rem;}
+.resena-serv{color:rgba(255,255,255,.25);font-size:.7rem;margin-top:.05rem;}
+
+/* ── CONTACTO compacto ── */
+.contacto-section{background:var(--gris-suave);padding:5rem 2rem;}
+.contacto-compact{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+.contacto-img-wrap img{width:100%;height:420px;object-fit:cover;border-radius:200px 60px 200px 60px;box-shadow:0 30px 80px rgba(0,0,0,.15);}
+.contacto-datos{display:flex;flex-direction:column;gap:1rem;margin-top:1.5rem;}
+.dato-item{display:flex;align-items:center;gap:.8rem;}
+.dato-icon{width:38px;height:38px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:0 4px 15px rgba(0,0,0,.08);flex-shrink:0;}
+.dato-label{font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--texto-claro);font-weight:600;}
+.dato-valor{font-size:.88rem;color:var(--negro);font-weight:500;}
+.btn-wa-grande{display:inline-flex;align-items:center;gap:.7rem;background:linear-gradient(135deg,#25D366,#128C7E);color:white;padding:.9rem 1.8rem;border-radius:4px;font-size:.85rem;font-weight:700;text-decoration:none;transition:transform .25s,box-shadow .25s;}
+.btn-wa-grande:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(37,211,102,.4);}
+
+/* ── FEATURES compacto ── */
+.features-section{background:var(--negro);padding:5rem 2rem;}
+.features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;}
+.feature-card{border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:2rem 1.5rem;transition:border-color .3s,transform .3s;position:relative;overflow:hidden;}
+.feature-card:hover{border-color:rgba(212,175,55,.25);transform:translateY(-5px);}
+.feature-num{font-family:var(--font-serif);font-size:3rem;font-weight:700;color:rgba(212,175,55,.06);position:absolute;top:.3rem;right:.8rem;line-height:1;}
+.feature-icon{font-size:1.8rem;margin-bottom:.8rem;display:block;}
+.feature-titulo{font-family:var(--font-serif);color:white;font-size:.95rem;margin-bottom:.4rem;font-weight:600;}
+.feature-texto{font-size:.78rem;color:rgba(255,255,255,.3);line-height:1.7;}
+
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(40px);transition:opacity .8s var(--ease),transform .8s var(--ease);}
 .reveal.visible{opacity:1;transform:translateY(0);}
@@ -313,22 +377,15 @@ footer{background:var(--carbon);border-top:1px solid rgba(255,255,255,.05);paddi
 
 /* ── RESPONSIVE ── */
 @media(max-width:1100px){
-  .hero{grid-template-columns:1fr;padding:0 2rem;text-align:center;}
-  .hero-img-wrap{display:none;}
-  .hero-content{padding:9rem 0 3rem;}
-  .hero-eyebrow{justify-content:center;}
-  .hero-sub{margin:0 auto 2.5rem;}
-  .hero-actions{justify-content:center;}
-  .scroll-hint{left:50%;transform:translateX(-50%);}
   .features-grid{grid-template-columns:repeat(2,1fr);}
-  .proceso-grid{grid-template-columns:1fr;gap:1.5rem;}
-  .proceso-arrow{display:none;}
   .servicios-grid{grid-template-columns:repeat(2,1fr);}
   .resenas-grid{grid-template-columns:repeat(2,1fr);}
-  .contacto-grid{grid-template-columns:1fr;gap:3rem;}
+  .contacto-compact{grid-template-columns:1fr;gap:2.5rem;}
   .footer-grid{grid-template-columns:1fr 1fr;gap:2.5rem;}
   .galeria-masonry{grid-template-columns:repeat(2,1fr);grid-template-rows:auto;}
   .gal-item.tall{grid-row:span 1;}
+  .reservar-card{grid-template-columns:1fr;gap:2rem;}
+  .descuento-flotante{display:none;}
 }
 @media(max-width:650px){
   .navbar{padding:1rem 1.5rem;}
@@ -336,14 +393,14 @@ footer{background:var(--carbon);border-top:1px solid rgba(255,255,255,.05);paddi
   .hamburger{display:flex;}
   .navbar-links.open{display:flex;flex-direction:column;position:fixed;top:64px;left:0;right:0;background:rgba(13,13,13,.97);padding:2rem;gap:1.5rem;z-index:899;}
   .servicios-grid{grid-template-columns:1fr;}
-  .features-grid{grid-template-columns:1fr;}
+  .features-grid{grid-template-columns:1fr 1fr;}
   .resenas-grid{grid-template-columns:1fr;}
   .footer-grid{grid-template-columns:1fr;}
   .footer-bottom{flex-direction:column;text-align:center;}
   .catalogo-header{flex-direction:column;align-items:flex-start;}
   .buscador-wrap input{width:100%;}
-  .cta-banner-content{flex-direction:column;text-align:center;}
-  .galeria-masonry{grid-template-columns:1fr;grid-template-rows:auto;}
+  .galeria-masonry{grid-template-columns:1fr 1fr;grid-template-rows:auto;}
   body{cursor:auto;}
   .cursor,.cursor-dot{display:none;}
+  .contacto-img-wrap{display:none;}
 }

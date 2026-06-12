@@ -95,10 +95,26 @@ function initReveal() {
 function setWALinks() {
   const msg = encodeURIComponent('Hola! Me gustaría información sobre sus servicios de uñas 💅');
   const url = `https://wa.me/${WA}?text=${msg}`;
-  ['waFloat','footerWA','btnWaContacto','ctaBannerWA'].forEach(id => {
+  ['waFloat','footerWA','btnWaContacto','heroWA'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.href = url;
   });
+}
+
+/* ── RESERVAR ── */
+function generarReserva(e) {
+  e.preventDefault();
+  const servicio = document.getElementById('resServicio').value;
+  const nombre = document.getElementById('resNombre').value.trim();
+  const telefono = document.getElementById('resTelefono').value.trim();
+  if (!servicio) { alert('Por favor selecciona un servicio'); return; }
+  const partes = [`Hola! Quiero reservar una cita 💅`];
+  if (servicio) partes.push(`*Servicio:* ${servicio}`);
+  if (nombre) partes.push(`*Nombre:* ${nombre}`);
+  if (telefono) partes.push(`*Teléfono:* ${telefono}`);
+  partes.push('¿Tienen disponibilidad? 😊');
+  const url = `https://wa.me/${WA}?text=${encodeURIComponent(partes.join('\n'))}`;
+  window.open(url, '_blank');
 }
 
 /* ── SERVICIOS ── */
