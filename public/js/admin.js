@@ -135,10 +135,10 @@ function abrirFormServicio() {
   document.getElementById('sPrecio').value = '';
   document.getElementById('sDuracion').value = '';
   document.getElementById('sDescripcion').value = '';
-  document.getElementById('dropContent').innerHTML = '📷 Haz clic o arrastra una imagen aquí';
+  document.getElementById('sImagen').value = '';
+  document.getElementById('imgPreview').innerHTML = '';
   document.getElementById('activoGroup').style.display = 'none';
   document.getElementById('modalServicioOverlay').classList.add('activo');
-  configurarDragDrop();
 }
 
 async function editarServicio(id) {
@@ -154,11 +154,11 @@ async function editarServicio(id) {
     document.getElementById('sDescripcion').value = s.descripcion;
     document.getElementById('sActivo').value = s.activo ? 'true' : 'false';
     document.getElementById('activoGroup').style.display = 'block';
-    document.getElementById('dropContent').innerHTML = s.imagen
-      ? `<img src="${s.imagen}" style="max-height:120px;border-radius:8px">`
-      : '📷 Haz clic o arrastra una imagen aquí';
+    document.getElementById('sImagen').value = s.imagen || '';
+    document.getElementById('imgPreview').innerHTML = s.imagen
+      ? `<img src="${s.imagen}" style="max-height:100px;border-radius:8px;margin-top:4px">`
+      : '';
     document.getElementById('modalServicioOverlay').classList.add('activo');
-    configurarDragDrop();
   } catch {
     alert('Error al cargar servicio');
   }
@@ -172,27 +172,21 @@ async function guardarServicio() {
   const duracion = document.getElementById('sDuracion').value;
   const descripcion = document.getElementById('sDescripcion').value.trim();
   const activo = document.getElementById('sActivo').value;
-  const imgFile = document.getElementById('sImagen').files[0];
+  const imagen = document.getElementById('sImagen').value.trim();
 
   if (!nombre || !categoria || !precio || !duracion || !descripcion) {
     alert('Por favor completa todos los campos obligatorios');
     return;
   }
 
-  const formData = new FormData();
-  formData.append('nombre', nombre);
-  formData.append('categoria', categoria);
-  formData.append('precio', precio);
-  formData.append('duracion', duracion);
-  formData.append('descripcion', descripcion);
-  if (id) formData.append('activo', activo);
-  if (imgFile) formData.append('imagen', imgFile);
+  const body = { nombre, categoria, precio, duracion, descripcion, imagen };
+  if (id) body.activo = activo;
 
   try {
     const res = await fetch(`${API}/api/servicios${id ? '/' + id : ''}`, {
       method: id ? 'PUT' : 'POST',
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
     });
     const data = await res.json();
     if (!res.ok) { alert(data.error || 'Error al guardar'); return; }
@@ -222,34 +216,11 @@ async function eliminarServicio(id, nombre) {
 
 function cerrarModalServicio() {
   document.getElementById('modalServicioOverlay').classList.remove('activo');
-  document.getElementById('sImagen').value = '';
 }
 
-// DRAG & DROP imagen
-function configurarDragDrop() {
-  const zone = document.getElementById('dropZone');
-  zone.ondragover = e => { e.preventDefault(); zone.classList.add('drag-over'); };
-  zone.ondragleave = () => zone.classList.remove('drag-over');
-  zone.ondrop = e => {
-    e.preventDefault(); zone.classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      const dt = new DataTransfer();
-      dt.items.add(file);
-      document.getElementById('sImagen').files = dt.files;
-      previewImagen({ files: [file] });
-    }
-  };
-}
-
-function previewImagen(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('dropContent').innerHTML = `<img src="${e.target.result}" style="max-height:150px;border-radius:8px">`;
-  };
-  reader.readAsDataURL(file);
+function previewImagenUrl(url) {
+  const el = document.getElementById('imgPreview');
+  el.innerHTML = url ? `<img src="${url}" style="max-height:100px;border-radius:8px;margin-top:4px" onerror="this.style.display='none'">` : '';
 }
 
 // CALIFICACIONES

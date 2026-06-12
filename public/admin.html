@@ -153,11 +153,9 @@
       <textarea id="sDescripcion" rows="3" placeholder="Describe el servicio..." maxlength="500"></textarea>
     </div>
     <div class="admin-form-group">
-      <label>Imagen</label>
-      <div class="drop-zone" id="dropZone" onclick="document.getElementById('sImagen').click()">
-        <div id="dropContent">📷 Haz clic o arrastra una imagen aquí</div>
-        <input type="file" id="sImagen" accept="image/*" style="display:none" onchange="previewImagen(this)">
-      </div>
+      <label>URL de imagen (opcional)</label>
+      <input type="url" id="sImagen" placeholder="https://ejemplo.com/imagen.jpg" oninput="previewImagenUrl(this.value)">
+      <div id="imgPreview" style="margin-top:0.5rem"></div>
     </div>
     <div class="admin-form-group" id="activoGroup" style="display:none">
       <label>Estado</label>
