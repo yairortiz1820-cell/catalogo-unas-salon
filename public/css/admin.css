@@ -246,3 +246,40 @@ tr:hover td { background: rgba(255,20,147,0.02); }
   .main-content { margin-left: 0; }
   .hamburger-btn { display: block; }
 }
+
+@media (max-width: 600px) {
+  .login-card { padding: 1.5rem; margin: 1rem; }
+  .login-logo h1 { font-size: 1.4rem; }
+
+  .main-content { padding: 1rem; }
+  .topbar { padding: 0.8rem 1rem; margin: -1rem -1rem 1rem -1rem; }
+  .topbar h2 { font-size: 0.85rem; }
+
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 0.7rem; margin-bottom: 1rem; }
+  .stat-card { padding: 0.9rem; }
+  .stat-card .stat-icon { font-size: 1.4rem; margin-bottom: 0.3rem; }
+  .stat-card .stat-num { font-size: 1.5rem; }
+  .stat-card .stat-label { font-size: 0.75rem; }
+
+  .page-header { flex-direction: column; align-items: flex-start; gap: 0.8rem; margin-bottom: 1rem; }
+  .page-header h1 { font-size: 1.3rem; }
+
+  .tabla-container { border-radius: 8px; }
+  .tabla-container > table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  th, td { padding: 0.65rem 0.7rem; font-size: 0.8rem; white-space: nowrap; }
+  .tabla-img { width: 36px; height: 36px; font-size: 1.1rem; }
+
+  .filtros-cal { gap: 0.4rem; }
+  .filtro-cal { padding: 0.35rem 0.7rem; font-size: 0.75rem; }
+
+  .modal-admin { padding: 1.2rem; border-radius: 12px; }
+  .modal-admin h3 { font-size: 1rem; margin-bottom: 1rem; }
+  .form-row { grid-template-columns: 1fr; gap: 0; }
+  .modal-btns { flex-wrap: wrap; }
+  .modal-btns .btn { flex: 1; text-align: center; }
+
+  .btn { padding: 0.6rem 0.9rem; font-size: 0.82rem; }
+  .btn-sm { padding: 0.4rem 0.6rem; font-size: 0.75rem; }
+
+  .sidebar { width: 85vw; }
+}
