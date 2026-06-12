@@ -56,9 +56,13 @@
   <!-- MAIN -->
   <main class="main-content">
     <div class="topbar">
-      <h2>Panel de administración</h2>
+      <div style="display:flex;align-items:center;gap:1rem">
+        <button class="hamburger-btn" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+        <h2>Panel de administración</h2>
+      </div>
       <span class="admin-name" id="topbarNombre"></span>
     </div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="cerrarSidebar()"></div>
 
     <!-- DASHBOARD -->
     <div id="pageDashboard" class="page activa">
@@ -101,6 +105,12 @@
     <div id="pageCalificaciones" class="page">
       <div class="page-header">
         <div><h1>Calificaciones</h1><p>Revisa y modera las reseñas</p></div>
+      </div>
+      <div class="filtros-cal">
+        <button class="filtro-cal activo" onclick="filtrarCals('todas',this)">Todas</button>
+        <button class="filtro-cal pendiente" onclick="filtrarCals('pendiente',this)">🕐 Pendientes</button>
+        <button class="filtro-cal aprobada" onclick="filtrarCals('aprobada',this)">✅ Aprobadas</button>
+        <button class="filtro-cal rechazada" onclick="filtrarCals('rechazada',this)">❌ Rechazadas</button>
       </div>
       <div class="tabla-container">
         <table>

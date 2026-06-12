@@ -59,6 +59,16 @@ function mostrarPagina(pagina, btn) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('activo'));
   document.getElementById(`page${pagina.charAt(0).toUpperCase() + pagina.slice(1)}`).classList.add('activa');
   btn.classList.add('activo');
+  cerrarSidebar();
+}
+
+function toggleSidebar() {
+  document.querySelector('.sidebar').classList.toggle('abierto');
+  document.getElementById('sidebarOverlay').classList.toggle('activo');
+}
+function cerrarSidebar() {
+  document.querySelector('.sidebar').classList.remove('abierto');
+  document.getElementById('sidebarOverlay').classList.remove('activo');
 }
 
 // DASHBOARD
@@ -224,24 +234,35 @@ function previewImagenUrl(url) {
 }
 
 // CALIFICACIONES
+let filtroCalActual = 'todas';
+
+function filtrarCals(estado, btn) {
+  filtroCalActual = estado;
+  document.querySelectorAll('.filtro-cal').forEach(b => b.classList.remove('activo'));
+  btn.classList.add('activo');
+  cargarCalificaciones();
+}
+
 async function cargarCalificaciones() {
   const tbody = document.getElementById('calsTabla');
   try {
     const res = await fetch(`${API}/api/calificaciones/admin/todas`, { headers: { Authorization: `Bearer ${token}` } });
     const cals = await res.json();
-    if (!cals.length) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--texto-claro)">No hay calificaciones</td></tr>';
+    const lista = filtroCalActual === 'todas' ? cals : cals.filter(c => c.estado === filtroCalActual);
+    if (!lista.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--texto-claro)">No hay calificaciones con este filtro</td></tr>';
       return;
     }
-    tbody.innerHTML = cals.map(c => `
+    tbody.innerHTML = lista.map(c => `
       <tr>
         <td><strong>${c.cliente_nombre}</strong></td>
         <td>${c.servicio_id?.nombre || '–'}</td>
         <td style="color:var(--dorado)">${'⭐'.repeat(c.estrellas)}</td>
         <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.comentario || '–'}</td>
         <td><span class="badge badge-${c.estado}">${c.estado}</span></td>
-        <td>
-          <button class="btn btn-warning btn-sm" onclick="abrirModalCal('${c._id}','${c.cliente_nombre}',${c.estrellas},'${(c.comentario||'').replace(/'/g,"\\'")}','${(c.respuesta_admin||'').replace(/'/g,"\\'")}')">💬 Responder</button>
+        <td style="white-space:nowrap">
+          ${c.estado === 'pendiente' ? `<button class="btn btn-success btn-sm" onclick="aprobarRapido('${c._id}')">✅</button>` : ''}
+          <button class="btn btn-warning btn-sm" onclick="abrirModalCal('${c._id}','${c.cliente_nombre.replace(/'/g,"\\'")}',${c.estrellas},'${(c.comentario||'').replace(/'/g,"\\'")}','${(c.respuesta_admin||'').replace(/'/g,"\\'")}')">💬</button>
           <button class="btn btn-danger btn-sm" onclick="eliminarCal('${c._id}')">🗑️</button>
         </td>
       </tr>
@@ -249,6 +270,17 @@ async function cargarCalificaciones() {
   } catch {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:red">Error al cargar</td></tr>';
   }
+}
+
+async function aprobarRapido(id) {
+  try {
+    const res = await fetch(`${API}/api/calificaciones/${id}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ estado: 'aprobada', respuesta_admin: '' })
+    });
+    if (res.ok) { cargarCalificaciones(); cargarDashboard(); }
+  } catch { alert('Error de conexión'); }
 }
 
 function abrirModalCal(id, nombre, estrellas, comentario, respuesta) {

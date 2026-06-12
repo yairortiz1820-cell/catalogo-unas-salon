@@ -207,8 +207,42 @@ tr:hover td { background: rgba(255,20,147,0.02); }
   font-size: 1.4rem;
 }
 
+/* HAMBURGER */
+.hamburger-btn {
+  display: none; background: none; border: none;
+  font-size: 1.4rem; cursor: pointer; color: var(--texto);
+  padding: 0.3rem 0.5rem; border-radius: 6px;
+  transition: var(--transicion);
+}
+.hamburger-btn:hover { background: var(--gris); }
+
+/* SIDEBAR OVERLAY */
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4); z-index: 99;
+}
+.sidebar-overlay.activo { display: block; }
+.sidebar.abierto { transform: translateX(0) !important; }
+
+/* FILTROS CALIFICACIONES */
+.filtros-cal {
+  display: flex; gap: 0.6rem; flex-wrap: wrap;
+  margin-bottom: 1.2rem;
+}
+.filtro-cal {
+  padding: 0.45rem 1rem; border: 2px solid var(--gris-medio);
+  border-radius: 20px; cursor: pointer; font-weight: 600;
+  font-size: 0.82rem; background: white; transition: var(--transicion);
+  color: var(--texto-claro);
+}
+.filtro-cal.activo, .filtro-cal:hover { border-color: var(--rosa); color: var(--rosa); background: rgba(255,20,147,0.06); }
+.filtro-cal.pendiente.activo { border-color: #d07a00; color: #d07a00; background: #fff3e0; }
+.filtro-cal.aprobada.activo { border-color: #2d7a52; color: #2d7a52; background: #e6f9f0; }
+.filtro-cal.rechazada.activo { border-color: #c53030; color: #c53030; background: #fde8e8; }
+
 @media (max-width: 900px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .sidebar { transform: translateX(-100%); }
+  .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
   .main-content { margin-left: 0; }
+  .hamburger-btn { display: block; }
 }
