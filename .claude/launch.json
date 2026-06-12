@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "salon-unas",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server-demo.js"],
+      "port": 3000
+    }
+  ]
+}

@@ -1,252 +1,206 @@
-const API = '';
-const WA_NUMBER = '573001234567';
+const WA = '573001234567';
 let servicioActual = null;
-let estrellasSeleccionadas = 0;
-let categoriaActual = 'Todos';
-let busquedaActual = '';
+let stars = 0;
+let catActual = 'Todos';
+let busqueda = '';
 
-// Init
 document.addEventListener('DOMContentLoaded', () => {
+  initNavbar();
+  initReveal();
   cargarServicios();
   cargarResenas();
-  configurarWaFlotante();
-  configurarHamburger();
+  setWA();
 });
 
-function configurarWaFlotante() {
-  const btn = document.getElementById('waFlotante');
-  btn.href = `https://wa.me/${WA_NUMBER}?text=Hola! Me gustaría más información sobre sus servicios.`;
+/* NAVBAR scroll */
+function initNavbar() {
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
 }
 
-function configurarHamburger() {
-  const hamburger = document.getElementById('hamburger');
-  const navLinks = document.getElementById('navLinks');
-  hamburger.addEventListener('click', () => navLinks.classList.toggle('abierto'));
+/* Reveal on scroll */
+function initReveal() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 }
 
-// SERVICIOS
+/* WA links */
+function setWA() {
+  const msg = encodeURIComponent('Hola! Me gustaría información sobre sus servicios de uñas 💅');
+  const url = `https://wa.me/${WA}?text=${msg}`;
+  document.getElementById('waFloat').href = url;
+  const fw = document.getElementById('footerWA');
+  if (fw) fw.href = url;
+}
+
+/* ── SERVICIOS ──────────────────────────────────────── */
 async function cargarServicios() {
   const grid = document.getElementById('serviciosGrid');
-  grid.innerHTML = '<div class="loading">Cargando servicios... 💅</div>';
+  grid.innerHTML = '<div class="loading-state">Cargando servicios...</div>';
   try {
-    const params = new URLSearchParams();
-    if (categoriaActual !== 'Todos') params.append('categoria', categoriaActual);
-    if (busquedaActual) params.append('buscar', busquedaActual);
-
-    const res = await fetch(`${API}/api/servicios?${params}`);
-    const servicios = await res.json();
-
-    if (!servicios.length) {
-      grid.innerHTML = '<div class="empty"><p style="font-size:2rem">🔍</p><p>No se encontraron servicios</p></div>';
-      return;
-    }
-
-    grid.innerHTML = servicios.map(s => `
-      <div class="servicio-card" onclick="abrirModal('${s._id}')">
-        ${s.imagen
-          ? `<img src="${s.imagen}" alt="${s.nombre}" class="servicio-img" onerror="this.style.display='none'">`
-          : `<div class="servicio-img-placeholder">${iconoCategoria(s.categoria)}</div>`
-        }
-        <div class="servicio-body">
-          <div class="servicio-categoria">${s.categoria}</div>
-          <div class="servicio-nombre">${s.nombre}</div>
-          <div class="servicio-desc">${s.descripcion}</div>
-          <div class="servicio-footer">
-            <div>
-              <div class="servicio-precio">${formatPrecio(s.precio)}</div>
-              <div class="servicio-duracion">⏱️ ${s.duracion} min</div>
-            </div>
-            <div class="estrellas">
-              <span class="stars">${renderEstrellas(s.calificacion_promedio)}</span>
-              <span>${s.calificacion_promedio > 0 ? s.calificacion_promedio.toFixed(1) : 'Nuevo'}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  } catch (err) {
-    grid.innerHTML = '<div class="empty"><p>Error al cargar servicios. Verifica la conexión.</p></div>';
-  }
+    const p = new URLSearchParams();
+    if (catActual !== 'Todos') p.append('categoria', catActual);
+    if (busqueda) p.append('buscar', busqueda);
+    const r = await fetch(`/api/servicios?${p}`);
+    const data = await r.json();
+    if (!data.length) { grid.innerHTML = '<div class="empty-state"><p style="font-size:2rem">🔍</p><p>Sin resultados</p></div>'; return; }
+    grid.innerHTML = data.map(renderCard).join('');
+    // Re-observe nuevas cards
+    grid.querySelectorAll('.serv-card').forEach((el, i) => {
+      el.style.opacity = '0'; el.style.transform = 'translateY(30px)';
+      setTimeout(() => { el.style.transition = 'opacity .5s ease, transform .5s ease'; el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, i * 80);
+    });
+  } catch { grid.innerHTML = '<div class="empty-state"><p>Error al cargar. Verifica la conexión.</p></div>'; }
 }
 
-function filtrar(categoria, btn) {
-  categoriaActual = categoria;
-  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('activo'));
+function renderCard(s) {
+  return `
+  <div class="serv-card" onclick="abrirModal('${s._id}')">
+    <div class="serv-img-wrap">
+      ${s.imagen
+        ? `<img src="${s.imagen}" alt="${s.nombre}" loading="lazy" onerror="this.outerHTML='<div class=serv-img-placeholder>${ico(s.categoria)}</div>'">`
+        : `<div class="serv-img-placeholder">${ico(s.categoria)}</div>`}
+      <div class="serv-overlay"><div class="serv-overlay-text">Ver detalles →</div></div>
+      <div class="serv-badge">${s.categoria}</div>
+    </div>
+    <div class="serv-body">
+      <div class="serv-nombre">${s.nombre}</div>
+      <div class="serv-desc">${s.descripcion}</div>
+      <div class="serv-footer">
+        <div class="serv-precio">${fmt(s.precio)}</div>
+        <div class="serv-meta">
+          <div class="serv-estrellas">${s.calificacion_promedio > 0 ? '★'.repeat(Math.round(s.calificacion_promedio)) + ' ' + s.calificacion_promedio.toFixed(1) : 'Nuevo'}</div>
+          <div class="serv-duracion">⏱ ${s.duracion} min</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function filtrar(cat, btn) {
+  catActual = cat;
+  document.querySelectorAll('.filtro-pill').forEach(b => b.classList.remove('activo'));
   btn.classList.add('activo');
   cargarServicios();
 }
 
 function buscarServicios() {
-  busquedaActual = document.getElementById('buscador').value;
-  clearTimeout(window._buscarTimeout);
-  window._buscarTimeout = setTimeout(cargarServicios, 400);
+  busqueda = document.getElementById('buscador').value;
+  clearTimeout(window._bt);
+  window._bt = setTimeout(cargarServicios, 380);
 }
 
-// MODAL
+/* ── MODAL ──────────────────────────────────────────── */
 async function abrirModal(id) {
   try {
-    const res = await fetch(`${API}/api/servicios/${id}`);
-    const s = await res.json();
+    const r = await fetch(`/api/servicios/${id}`);
+    const s = await r.json();
     servicioActual = s;
 
-    const imgContainer = document.getElementById('modalImgContainer');
-    imgContainer.innerHTML = s.imagen
-      ? `<img src="${s.imagen}" alt="${s.nombre}" class="modal-img" onerror="this.outerHTML='<div class=modal-img-placeholder>${iconoCategoria(s.categoria)}</div>'">`
-      : `<div class="modal-img-placeholder">${iconoCategoria(s.categoria)}</div>`;
+    document.getElementById('modalImgWrap').innerHTML = s.imagen
+      ? `<img class="modal-img" src="${s.imagen}" alt="${s.nombre}" onerror="this.outerHTML='<div class=modal-img-placeholder>${ico(s.categoria)}</div>'"><button class="modal-close-btn" onclick="cerrarModal()">✕</button>`
+      : `<div class="modal-img-placeholder">${ico(s.categoria)}</div><button class="modal-close-btn" onclick="cerrarModal()">✕</button>`;
 
-    document.getElementById('modalCategoria').textContent = s.categoria;
-    document.getElementById('modalNombre').textContent = s.nombre;
-    document.getElementById('modalPrecio').textContent = formatPrecio(s.precio);
+    document.getElementById('modalTag').textContent = s.categoria;
+    document.getElementById('modalTitulo').textContent = s.nombre;
+    document.getElementById('modalPrecio').textContent = fmt(s.precio);
     document.getElementById('modalDesc').textContent = s.descripcion;
     document.getElementById('modalDuracion').textContent = `${s.duracion} minutos`;
-    document.getElementById('modalCal').textContent = s.calificacion_promedio > 0
-      ? `${s.calificacion_promedio.toFixed(1)} (${s.total_calificaciones} reseñas)`
-      : 'Sin calificaciones aún';
+    document.getElementById('modalCal').textContent = s.calificacion_promedio > 0 ? `${s.calificacion_promedio.toFixed(1)} (${s.total_calificaciones} reseñas)` : 'Sé la primera en calificar';
 
-    const msg = encodeURIComponent(`Hola! Me interesa el servicio: *${s.nombre}* - Precio: ${formatPrecio(s.precio)}. ¿Tienen disponibilidad?`);
-    document.getElementById('modalWA').href = `https://wa.me/${WA_NUMBER}?text=${msg}`;
+    const msg = encodeURIComponent(`Hola! Me interesa el servicio: *${s.nombre}* — Precio: ${fmt(s.precio)}. ¿Tienen disponibilidad?`);
+    document.getElementById('modalWA').href = `https://wa.me/${WA}?text=${msg}`;
 
-    estrellasSeleccionadas = 0;
-    document.getElementById('calNombre').value = '';
-    document.getElementById('calComentario').value = '';
-    actualizarEstrellasSelectorUI(0);
-
-    await cargarCalificacionesModal(id);
+    stars = 0; document.getElementById('calNombre').value = ''; document.getElementById('calTexto').value = '';
+    paintStars(0);
+    await loadCals(id);
 
     document.getElementById('modalOverlay').classList.add('activo');
     document.body.style.overflow = 'hidden';
-  } catch (err) {
-    console.error('Error abriendo modal:', err);
-  }
+  } catch(e) { console.error(e); }
 }
 
-async function cargarCalificacionesModal(servicioId) {
-  const lista = document.getElementById('modalCalsLista');
+async function loadCals(id) {
+  const el = document.getElementById('modalCalsLista');
   try {
-    const res = await fetch(`${API}/api/calificaciones/servicio/${servicioId}`);
-    const cals = await res.json();
-
-    if (!cals.length) {
-      lista.innerHTML = '<p style="color:var(--texto-claro);font-size:0.9rem">Sé la primera en calificar este servicio 🌟</p>';
-      return;
-    }
-
-    lista.innerHTML = cals.map(c => `
-      <div class="cal-item">
-        <div class="cal-header">
-          <span class="cal-nombre">${c.cliente_nombre}</span>
-          <span style="color:var(--dorado)">${'⭐'.repeat(c.estrellas)}</span>
+    const r = await fetch(`/api/calificaciones/servicio/${id}`);
+    const cals = await r.json();
+    if (!cals.length) { el.innerHTML = '<p style="color:var(--texto-claro);font-size:.85rem;margin-bottom:1rem">Aún sin calificaciones — ¡sé la primera! 🌟</p>'; return; }
+    el.innerHTML = `<div class="cal-grid">${cals.map(c => `
+      <div class="cal-card">
+        <div class="cal-card-header">
+          <span class="cal-card-nombre">${c.cliente_nombre}</span>
+          <span class="cal-card-stars">${'★'.repeat(c.estrellas)}</span>
         </div>
-        ${c.comentario ? `<div class="cal-comentario">"${c.comentario}"</div>` : ''}
-        ${c.respuesta_admin ? `<div class="cal-respuesta">💬 ${c.respuesta_admin}</div>` : ''}
-      </div>
-    `).join('');
-  } catch {
-    lista.innerHTML = '';
-  }
+        ${c.comentario ? `<div class="cal-card-texto">"${c.comentario}"</div>` : ''}
+        ${c.respuesta_admin ? `<div class="cal-respuesta">Respuesta: ${c.respuesta_admin}</div>` : ''}
+      </div>`).join('')}</div>`;
+  } catch { el.innerHTML = ''; }
 }
 
-function cerrarModal(event) {
-  if (event && event.target !== document.getElementById('modalOverlay')) return;
+function cerrarModal() {
   document.getElementById('modalOverlay').classList.remove('activo');
   document.body.style.overflow = '';
   servicioActual = null;
 }
+function cerrarModalClick(e) { if (e.target === document.getElementById('modalOverlay')) cerrarModal(); }
 
-// CALIFICACIONES
-function seleccionarEstrellas(n) {
-  estrellasSeleccionadas = n;
-  actualizarEstrellasSelectorUI(n);
+/* Estrellas */
+function pickStar(n) { stars = n; paintStars(n); }
+function paintStars(n) {
+  document.querySelectorAll('#starRow span').forEach((s, i) => s.classList.toggle('on', i < n));
 }
 
-function actualizarEstrellasSelectorUI(n) {
-  document.querySelectorAll('#starSelector span').forEach((s, i) => {
-    s.classList.toggle('activo', i < n);
-  });
-}
-
-async function enviarCalificacion() {
+async function enviarCal() {
   const nombre = document.getElementById('calNombre').value.trim();
-  const comentario = document.getElementById('calComentario').value.trim();
-
-  if (!nombre) return alert('Por favor ingresa tu nombre');
-  if (!estrellasSeleccionadas) return alert('Por favor selecciona una calificación');
-  if (!servicioActual) return;
-
+  const texto = document.getElementById('calTexto').value.trim();
+  if (!nombre) return alert('Ingresa tu nombre');
+  if (!stars) return alert('Selecciona una calificación');
   try {
-    const res = await fetch(`${API}/api/calificaciones`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        servicio_id: servicioActual._id,
-        cliente_nombre: nombre,
-        estrellas: estrellasSeleccionadas,
-        comentario
-      })
+    const r = await fetch('/api/calificaciones', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ servicio_id: servicioActual._id, cliente_nombre: nombre, estrellas: stars, comentario: texto })
     });
-
-    const data = await res.json();
-    if (res.ok) {
-      alert('¡Gracias por tu calificación! Será revisada pronto 🌟');
-      document.getElementById('calNombre').value = '';
-      document.getElementById('calComentario').value = '';
-      estrellasSeleccionadas = 0;
-      actualizarEstrellasSelectorUI(0);
-    } else {
-      alert(data.error || 'Error al enviar calificación');
-    }
-  } catch {
-    alert('Error de conexión');
-  }
+    if (r.ok) { alert('¡Gracias! Tu reseña está pendiente de aprobación 🌟'); document.getElementById('calNombre').value = ''; document.getElementById('calTexto').value = ''; stars = 0; paintStars(0); }
+    else { const d = await r.json(); alert(d.error || 'Error'); }
+  } catch { alert('Error de conexión'); }
 }
 
-// RESEÑAS GENERALES
+/* ── RESEÑAS ────────────────────────────────────────── */
 async function cargarResenas() {
   const grid = document.getElementById('resenasGrid');
   try {
-    // Obtener calificaciones aprobadas de todos los servicios
-    const resServicios = await fetch(`${API}/api/servicios`);
-    const servicios = await resServicios.json();
-
-    let todasCals = [];
-    for (const s of servicios.slice(0, 4)) {
-      const res = await fetch(`${API}/api/calificaciones/servicio/${s._id}`);
-      const cals = await res.json();
-      cals.forEach(c => { c._servicioNombre = s.nombre; });
-      todasCals = todasCals.concat(cals);
+    const r = await fetch('/api/servicios');
+    const servs = await r.json();
+    let all = [];
+    for (const s of servs.slice(0, 5)) {
+      const rc = await fetch(`/api/calificaciones/servicio/${s._id}`);
+      const cals = await rc.json();
+      cals.forEach(c => { c._servNombre = s.nombre; });
+      all = all.concat(cals);
     }
-
-    todasCals = todasCals.filter(c => c.comentario).slice(0, 6);
-
-    if (!todasCals.length) {
-      grid.innerHTML = '<div class="empty"><p>Aún no hay reseñas</p></div>';
-      return;
-    }
-
-    grid.innerHTML = todasCals.map(c => `
+    all = all.filter(c => c.comentario).slice(0, 6);
+    if (!all.length) { grid.innerHTML = ''; return; }
+    grid.innerHTML = all.map(c => `
       <div class="resena-card">
-        <div class="resena-estrellas">${'⭐'.repeat(c.estrellas)}</div>
-        <div class="resena-comentario">"${c.comentario}"</div>
-        <div class="resena-cliente">${c.cliente_nombre}</div>
-        <div class="resena-servicio">${c._servicioNombre}</div>
-      </div>
-    `).join('');
-  } catch {
-    grid.innerHTML = '<div class="empty"><p>No se pudieron cargar las reseñas</p></div>';
-  }
+        <div class="resena-stars">${'★'.repeat(c.estrellas)}</div>
+        <div class="resena-texto">"${c.comentario}"</div>
+        <div class="resena-autor">
+          <div class="resena-avatar">${c.cliente_nombre[0]}</div>
+          <div>
+            <div class="resena-nombre">${c.cliente_nombre}</div>
+            <div class="resena-serv">${c._servNombre}</div>
+          </div>
+        </div>
+      </div>`).join('');
+  } catch { grid.innerHTML = ''; }
 }
 
-// UTILS
-function formatPrecio(precio) {
-  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(precio);
-}
-
-function renderEstrellas(promedio) {
-  const llenas = Math.round(promedio);
-  return '⭐'.repeat(llenas) + '☆'.repeat(5 - llenas);
-}
-
-function iconoCategoria(cat) {
-  const iconos = { 'Acrílicas': '💅', 'Manicure': '✨', 'Pedicure': '🦶', 'Gel': '💎', 'Diseño': '🎨', 'Spa': '🌸' };
-  return iconos[cat] || '💅';
-}
+/* ── UTILS ──────────────────────────────────────────── */
+function fmt(n) { return new Intl.NumberFormat('es-CO', { style:'currency', currency:'COP', minimumFractionDigits:0 }).format(n); }
+function ico(cat) { return { 'Acrílicas':'💅','Manicure':'✨','Pedicure':'🦶','Gel':'💎','Diseño':'🎨','Spa':'🌸' }[cat] || '💅'; }
