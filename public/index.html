@@ -8,19 +8,28 @@
 </head>
 <body>
 
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="pre-logo">Glamour <em>✦</em> Nails</div>
+  <div class="pre-bar"><div class="pre-fill"></div></div>
+</div>
+
+<!-- CURSOR PERSONALIZADO -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
 <!-- NAVBAR -->
 <nav class="navbar" id="navbar">
   <div class="navbar-logo">Glamour <em>✦</em> Nails</div>
   <ul class="navbar-links" id="navLinks">
     <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#proceso">Proceso</a></li>
     <li><a href="#galeria">Galería</a></li>
     <li><a href="#resenas">Reseñas</a></li>
     <li><a href="#contacto">Contacto</a></li>
   </ul>
-  <a href="/admin" class="navbar-cta">Admin</a>
-  <div class="hamburger" id="hamburger">
-    <span></span><span></span><span></span>
-  </div>
+  <a href="/admin" class="navbar-cta">Admin ↗</a>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
 </nav>
 
 <!-- HERO -->
@@ -28,35 +37,40 @@
   <div class="hero-bg"></div>
   <div class="hero-orb hero-orb-1"></div>
   <div class="hero-orb hero-orb-2"></div>
-  <div class="hero-content">
-    <div class="hero-eyebrow">Arte & Elegancia en cada detalle</div>
-    <h1>Tu belleza<br>merece lo<br><span class="italic">extraordinario</span></h1>
-    <p class="hero-sub">Diseños únicos, materiales de calidad premium y un equipo apasionado por convertir tus uñas en una obra de arte.</p>
-    <div class="hero-actions">
-      <a href="#servicios" class="btn-gold">Ver catálogo</a>
-      <a href="#contacto" class="btn-outline-white">Agendar cita</a>
-    </div>
-    <div class="hero-stats">
-      <div>
-        <div class="hero-stat-num">500+</div>
-        <div class="hero-stat-label">Clientas felices</div>
-      </div>
-      <div>
-        <div class="hero-stat-num">6</div>
-        <div class="hero-stat-label">Servicios premium</div>
-      </div>
-      <div>
-        <div class="hero-stat-num">4.9★</div>
-        <div class="hero-stat-label">Calificación media</div>
-      </div>
+  <div class="hero-orb hero-orb-3"></div>
+
+  <!-- Imagen lateral decorativa -->
+  <div class="hero-img-wrap">
+    <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=90" alt="Uñas premium" class="hero-img">
+    <div class="hero-img-badge">
+      <span class="badge-num">500+</span>
+      <span class="badge-txt">Clientas felices</span>
     </div>
   </div>
-  <div class="scroll-hint">Scroll</div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-line"></span>
+      Arte & Elegancia en cada detalle
+      <span class="eyebrow-line"></span>
+    </div>
+    <h1>Tu belleza<br>merece lo<br><span class="hero-italic">extraordinario</span></h1>
+    <p class="hero-sub">Diseños únicos, materiales de calidad premium y un equipo apasionado por convertir tus uñas en una obra de arte.</p>
+    <div class="hero-actions">
+      <a href="#servicios" class="btn-gold">Explorar servicios</a>
+      <a href="#contacto" class="btn-ghost">Agendar cita ↗</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
 </section>
 
 <!-- MARQUEE -->
 <div class="marquee-strip">
-  <div class="marquee-inner">
+  <div class="marquee-inner" id="marqueeInner">
     <span>Uñas Acrílicas</span><span class="dot">✦</span>
     <span>Manicure Premium</span><span class="dot">✦</span>
     <span>Pedicure Spa</span><span class="dot">✦</span>
@@ -74,29 +88,69 @@
   </div>
 </div>
 
-<!-- FEATURES -->
+<!-- FEATURES / VALORES -->
 <section class="features-section">
   <div class="container">
+    <div class="features-top reveal">
+      <div class="section-label" style="color:var(--champagne)">Por qué elegirnos</div>
+      <h2 class="section-title" style="color:white">La experiencia<br><em class="gold-italic">Glamour Nails</em></h2>
+    </div>
     <div class="features-grid reveal">
       <div class="feature-card">
+        <div class="feature-num">01</div>
         <span class="feature-icon">💎</span>
         <div class="feature-titulo">Materiales Premium</div>
-        <p class="feature-texto">Solo usamos productos de las mejores marcas internacionales, garantizando durabilidad y seguridad.</p>
+        <p class="feature-texto">Solo usamos marcas internacionales certificadas. Durabilidad y seguridad garantizadas en cada servicio.</p>
       </div>
       <div class="feature-card">
+        <div class="feature-num">02</div>
         <span class="feature-icon">🎨</span>
         <div class="feature-titulo">Diseño Exclusivo</div>
-        <p class="feature-texto">Cada servicio es personalizado. Tu visión, nuestra técnica, resultados únicos e irrepetibles.</p>
+        <p class="feature-texto">Cada trabajo es personalizado a tu visión. Resultados únicos que reflejan tu personalidad.</p>
       </div>
       <div class="feature-card">
+        <div class="feature-num">03</div>
         <span class="feature-icon">🌸</span>
         <div class="feature-titulo">Ambiente Relajante</div>
-        <p class="feature-texto">Un espacio diseñado para que cada visita sea una experiencia de bienestar y lujo.</p>
+        <p class="feature-texto">Un espacio de lujo diseñado para que cada visita sea una experiencia de bienestar total.</p>
       </div>
       <div class="feature-card">
+        <div class="feature-num">04</div>
         <span class="feature-icon">⭐</span>
         <div class="feature-titulo">Expertas Certificadas</div>
-        <p class="feature-texto">Nuestro equipo está constantemente formado en las últimas tendencias internacionales.</p>
+        <p class="feature-texto">Equipo con formación continua en las últimas tendencias de Europa y Estados Unidos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESO -->
+<section class="proceso-section" id="proceso">
+  <div class="container">
+    <div class="text-center reveal">
+      <div class="section-label">Cómo funciona</div>
+      <h2 class="section-title">Tu experiencia<br><em style="font-style:italic;color:var(--rose)">paso a paso</em></h2>
+    </div>
+    <div class="proceso-grid reveal">
+      <div class="proceso-card">
+        <div class="proceso-icon">📱</div>
+        <div class="proceso-step">Paso 01</div>
+        <div class="proceso-titulo">Agenda por WhatsApp</div>
+        <p class="proceso-texto">Contáctanos y cuéntanos qué tienes en mente. Te ayudamos a elegir el servicio ideal.</p>
+      </div>
+      <div class="proceso-arrow">→</div>
+      <div class="proceso-card">
+        <div class="proceso-icon">🎨</div>
+        <div class="proceso-step">Paso 02</div>
+        <div class="proceso-titulo">Diseña tu estilo</div>
+        <p class="proceso-texto">Explora nuestro catálogo o trae tu referencia. Personalizamos cada detalle para ti.</p>
+      </div>
+      <div class="proceso-arrow">→</div>
+      <div class="proceso-card">
+        <div class="proceso-icon">💅</div>
+        <div class="proceso-step">Paso 03</div>
+        <div class="proceso-titulo">Disfruta el resultado</div>
+        <p class="proceso-texto">Relájate mientras nuestras expertas crean arte en tus manos. Resultados que duran semanas.</p>
       </div>
     </div>
   </div>
@@ -105,26 +159,28 @@
 <!-- CATÁLOGO -->
 <section class="catalogo-section" id="servicios">
   <div class="container">
-    <div class="reveal" style="margin-bottom:3rem">
-      <div class="section-label">Nuestros servicios</div>
-      <h2 class="section-title">Catálogo de<br><em style="font-style:italic;color:var(--rose)">tratamientos</em></h2>
-      <p class="section-sub">Encuentra el servicio perfecto para ti — cada uno cuidado al mínimo detalle.</p>
+    <div class="catalogo-header reveal">
+      <div>
+        <div class="section-label">Nuestros servicios</div>
+        <h2 class="section-title">Catálogo de<br><em style="font-style:italic;color:var(--rose)">tratamientos</em></h2>
+        <p class="section-sub">Cada servicio cuidado al mínimo detalle</p>
+      </div>
+      <div class="catalogo-controls">
+        <div class="buscador-wrap">
+          <span class="buscador-icon">🔍</span>
+          <input type="text" id="buscador" placeholder="Buscar..." oninput="buscarServicios()">
+        </div>
+      </div>
     </div>
 
-    <div class="filtros-wrap reveal">
-      <div class="filtros-pills">
-        <button class="filtro-pill activo" onclick="filtrar('Todos',this)">Todos</button>
-        <button class="filtro-pill" onclick="filtrar('Acrílicas',this)">Acrílicas</button>
-        <button class="filtro-pill" onclick="filtrar('Manicure',this)">Manicure</button>
-        <button class="filtro-pill" onclick="filtrar('Pedicure',this)">Pedicure</button>
-        <button class="filtro-pill" onclick="filtrar('Gel',this)">Gel UV</button>
-        <button class="filtro-pill" onclick="filtrar('Diseño',this)">Nail Art</button>
-        <button class="filtro-pill" onclick="filtrar('Spa',this)">Spa</button>
-      </div>
-      <div class="buscador-wrap">
-        <span class="buscador-icon">🔍</span>
-        <input type="text" id="buscador" placeholder="Buscar servicio..." oninput="buscarServicios()">
-      </div>
+    <div class="filtros-pills reveal">
+      <button class="filtro-pill activo" onclick="filtrar('Todos',this)">Todos</button>
+      <button class="filtro-pill" onclick="filtrar('Acrílicas',this)">Acrílicas</button>
+      <button class="filtro-pill" onclick="filtrar('Manicure',this)">Manicure</button>
+      <button class="filtro-pill" onclick="filtrar('Pedicure',this)">Pedicure</button>
+      <button class="filtro-pill" onclick="filtrar('Gel',this)">Gel UV</button>
+      <button class="filtro-pill" onclick="filtrar('Diseño',this)">Nail Art</button>
+      <button class="filtro-pill" onclick="filtrar('Spa',this)">Spa</button>
     </div>
 
     <div class="servicios-grid" id="serviciosGrid">
@@ -133,22 +189,50 @@
   </div>
 </section>
 
+<!-- BANNER CTA -->
+<div class="cta-banner">
+  <div class="cta-banner-content">
+    <div class="cta-banner-text">
+      <div class="section-label" style="color:var(--champagne)">Oferta especial</div>
+      <h3>Primera visita con <em style="color:var(--champagne);font-style:italic">20% descuento</em></h3>
+      <p>Menciona el código <strong>GLAMOUR20</strong> al agendar tu cita</p>
+    </div>
+    <a href="#contacto" class="btn-gold" id="ctaBannerWA">Agendar ahora →</a>
+  </div>
+</div>
+
 <!-- GALERÍA -->
-<section id="galeria" style="background:var(--gris-suave)">
+<section id="galeria" class="galeria-section">
   <div class="container">
-    <div class="reveal" style="margin-bottom:3rem;text-align:center">
+    <div class="text-center reveal" style="margin-bottom:3rem">
       <div class="section-label">Galería</div>
-      <h2 class="section-title">Trabajos que hablan<br>por sí solos</h2>
+      <h2 class="section-title">Nuestros trabajos<br><em style="font-style:italic;color:var(--rose)">más recientes</em></h2>
     </div>
     <div class="galeria-masonry reveal">
-      <div class="gal-item">💅</div>
-      <div class="gal-item">✨</div>
-      <div class="gal-item">💎</div>
-      <div class="gal-item">🌸</div>
-      <div class="gal-item">🎨</div>
-      <div class="gal-item">💗</div>
-      <div class="gal-item">⭐</div>
-      <div class="gal-item">🌺</div>
+      <div class="gal-item tall">
+        <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&q=80" alt="Uñas acrílicas" loading="lazy">
+        <div class="gal-overlay"><span>Acrílicas</span></div>
+      </div>
+      <div class="gal-item">
+        <img src="https://images.unsplash.com/photo-1604923701-2a38cfe3f91d?w=400&q=80" alt="Gel UV" loading="lazy">
+        <div class="gal-overlay"><span>Gel UV</span></div>
+      </div>
+      <div class="gal-item">
+        <img src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=400&q=80" alt="Manicure" loading="lazy">
+        <div class="gal-overlay"><span>Manicure</span></div>
+      </div>
+      <div class="gal-item tall">
+        <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&q=80" alt="Pedicure" loading="lazy">
+        <div class="gal-overlay"><span>Pedicure Spa</span></div>
+      </div>
+      <div class="gal-item">
+        <img src="https://images.unsplash.com/photo-1604654894578-f15a3edfbe7a?w=400&q=80" alt="Nail art" loading="lazy">
+        <div class="gal-overlay"><span>Nail Art</span></div>
+      </div>
+      <div class="gal-item">
+        <img src="https://images.unsplash.com/photo-1604923702375-4d6b72e85c37?w=400&q=80" alt="Diseño" loading="lazy">
+        <div class="gal-overlay"><span>Diseño</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -156,54 +240,109 @@
 <!-- RESEÑAS -->
 <section class="resenas-section" id="resenas">
   <div class="container">
-    <div class="reveal" style="margin-bottom:3.5rem;text-align:center">
+    <div class="text-center reveal" style="margin-bottom:3.5rem">
       <div class="section-label" style="color:var(--champagne)">Testimonios</div>
       <h2 class="section-title" style="color:white">Lo que dicen<br><em style="font-style:italic;color:var(--champagne)">nuestras clientas</em></h2>
+      <div class="resenas-rating-global" id="ratingGlobal"></div>
     </div>
     <div class="resenas-grid" id="resenasGrid">
-      <div class="loading-state" style="color:rgba(255,255,255,.3)">Cargando reseñas...</div>
+      <div class="loading-state" style="color:rgba(255,255,255,.3)">Cargando...</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section class="contacto-section" id="contacto">
+  <div class="container">
+    <div class="contacto-grid">
+      <div class="contacto-info reveal">
+        <div class="section-label">Contacto</div>
+        <h2 class="section-title">Agenda tu<br><em style="font-style:italic;color:var(--rose)">cita ahora</em></h2>
+        <p class="section-sub" style="margin-bottom:2rem">Estamos listas para atenderte. Escríbenos y te responderemos en minutos.</p>
+        <div class="contacto-datos">
+          <div class="dato-item">
+            <div class="dato-icon">📍</div>
+            <div>
+              <div class="dato-label">Ubicación</div>
+              <div class="dato-valor">Calle 15 # 8-42, Bogotá</div>
+            </div>
+          </div>
+          <div class="dato-item">
+            <div class="dato-icon">🕐</div>
+            <div>
+              <div class="dato-label">Horario</div>
+              <div class="dato-valor">Lun–Vie 9am–7pm · Sáb 9am–5pm</div>
+            </div>
+          </div>
+          <div class="dato-item">
+            <div class="dato-icon">📞</div>
+            <div>
+              <div class="dato-label">Teléfono</div>
+              <div class="dato-valor">+57 300 123 4567</div>
+            </div>
+          </div>
+        </div>
+        <a class="btn-wa-grande" id="btnWaContacto" href="#" target="_blank">
+          <span>💬</span> Chatear por WhatsApp
+        </a>
+      </div>
+      <div class="contacto-img reveal">
+        <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=85" alt="Salón de uñas">
+        <div class="contacto-img-badge">
+          <div class="badge-stars">★★★★★</div>
+          <div class="badge-desc">+500 clientas satisfechas</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer id="contacto">
-  <div class="footer-grid">
+<footer>
+  <div class="footer-grid container">
     <div>
       <div class="footer-brand">Glamour <em>✦</em> Nails</div>
       <p class="footer-tagline">El salón donde la elegancia se encuentra con el arte. Cada visita, una experiencia que va más allá de las uñas.</p>
+      <div class="footer-socials">
+        <a href="#" class="social-btn">IG</a>
+        <a href="#" class="social-btn">FB</a>
+        <a href="#" class="social-btn" id="footerWA">WA</a>
+      </div>
     </div>
     <div class="footer-col">
       <h5>Servicios</h5>
       <a href="#servicios">Uñas Acrílicas</a>
-      <a href="#servicios">Manicure</a>
+      <a href="#servicios">Manicure Premium</a>
       <a href="#servicios">Pedicure Spa</a>
       <a href="#servicios">Gel UV</a>
-      <a href="#servicios">Nail Art</a>
+      <a href="#servicios">Nail Art & Diseños</a>
+      <a href="#servicios">Spa de Manos</a>
     </div>
     <div class="footer-col">
       <h5>Horario</h5>
       <p>Lunes – Viernes</p>
-      <p>9:00 am – 7:00 pm</p>
-      <p style="margin-top:.5rem">Sábados</p>
-      <p>9:00 am – 5:00 pm</p>
+      <p style="color:white">9:00 am – 7:00 pm</p>
+      <p style="margin-top:.8rem">Sábados</p>
+      <p style="color:white">9:00 am – 5:00 pm</p>
+      <p style="margin-top:.8rem">Domingos</p>
+      <p>Cerrado</p>
     </div>
     <div class="footer-col">
       <h5>Contacto</h5>
       <p>📞 +57 300 123 4567</p>
-      <p>📍 Calle 15 # 8-42</p>
+      <p>📍 Calle 15 # 8-42, Bogotá</p>
       <p>📧 hola@glamournails.co</p>
-      <a href="#" id="footerWA" target="_blank" style="color:var(--wa);margin-top:.5rem">💬 WhatsApp</a>
+      <a href="/admin" style="color:var(--champagne);margin-top:1rem;display:inline-block">Panel Admin ↗</a>
     </div>
   </div>
-  <div class="footer-bottom">
-    <span>© 2024 Glamour Nails. Todos los derechos reservados.</span>
-    <span>Hecho con ❤️ para manos hermosas</span>
+  <div class="footer-bottom container">
+    <span>© 2024 Glamour Nails — Todos los derechos reservados</span>
+    <span style="color:var(--champagne)">Hecho con ❤️ para manos hermosas</span>
   </div>
 </footer>
 
 <!-- WA FLOTANTE -->
-<a class="wa-float" id="waFloat" href="#" target="_blank" title="Chatea con nosotras">💬</a>
+<a class="wa-float" id="waFloat" href="#" target="_blank">💬</a>
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="cerrarModalClick(event)">
@@ -218,21 +357,15 @@
         <div class="modal-chip">⏱️ <span id="modalDuracion"></span></div>
         <div class="modal-chip">⭐ <span id="modalCal"></span></div>
       </div>
-      <a class="btn-wa-modal" id="modalWA" href="#" target="_blank">
-        💬 &nbsp;Contactar por WhatsApp
-      </a>
-
+      <a class="btn-wa-modal" id="modalWA" href="#" target="_blank">💬 &nbsp;Contactar por WhatsApp</a>
       <div class="modal-divider"></div>
       <div id="modalCalsLista"></div>
-
       <div class="form-cal">
         <h4>Deja tu opinión</h4>
         <input type="text" class="inp" id="calNombre" placeholder="Tu nombre" maxlength="50">
         <div class="star-row" id="starRow">
-          <span onclick="pickStar(1)">⭐</span>
-          <span onclick="pickStar(2)">⭐</span>
-          <span onclick="pickStar(3)">⭐</span>
-          <span onclick="pickStar(4)">⭐</span>
+          <span onclick="pickStar(1)">⭐</span><span onclick="pickStar(2)">⭐</span>
+          <span onclick="pickStar(3)">⭐</span><span onclick="pickStar(4)">⭐</span>
           <span onclick="pickStar(5)">⭐</span>
         </div>
         <textarea class="inp" id="calTexto" placeholder="Tu comentario (opcional)" rows="3" maxlength="300"></textarea>
