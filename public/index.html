@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salón de Uñas Glamour ✨</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-logo">Glamour<span>✨</span>Nails</div>
+  <ul class="navbar-links" id="navLinks">
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#galeria">Galería</a></li>
+    <li><a href="#resenas">Reseñas</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a href="/admin" class="navbar-admin-btn" id="adminBtn">Admin</a>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-content">
+    <div class="hero-badge">💅 Profesionales en el arte de las uñas</div>
+    <h1>Tu belleza merece lo <span class="highlight">mejor</span></h1>
+    <p>Diseños únicos, materiales de calidad y un equipo apasionado por hacer que tus manos sean la envidia de todas.</p>
+    <div class="hero-btns">
+      <a href="#servicios" class="btn-primary">Ver catálogo</a>
+      <a href="#contacto" class="btn-secondary">Agendar cita</a>
+    </div>
+  </div>
+</section>
+
+<!-- CATÁLOGO DE SERVICIOS -->
+<section id="servicios" style="background: var(--gris);">
+  <div class="section-header">
+    <div class="section-badge">💎 Nuestros servicios</div>
+    <h2>Catálogo de tratamientos</h2>
+    <p>Encuentra el servicio perfecto para ti</p>
+  </div>
+
+  <!-- Buscador -->
+  <div class="buscador-container">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="buscador" placeholder="Buscar servicio..." oninput="buscarServicios()">
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros-container">
+    <button class="filtro-btn activo" onclick="filtrar('Todos', this)">Todos</button>
+    <button class="filtro-btn" onclick="filtrar('Acrílicas', this)">💅 Acrílicas</button>
+    <button class="filtro-btn" onclick="filtrar('Manicure', this)">✨ Manicure</button>
+    <button class="filtro-btn" onclick="filtrar('Pedicure', this)">🦶 Pedicure</button>
+    <button class="filtro-btn" onclick="filtrar('Gel', this)">💎 Gel</button>
+    <button class="filtro-btn" onclick="filtrar('Diseño', this)">🎨 Diseño</button>
+    <button class="filtro-btn" onclick="filtrar('Spa', this)">🌸 Spa</button>
+  </div>
+
+  <!-- Grid -->
+  <div class="servicios-grid" id="serviciosGrid">
+    <div class="loading">Cargando servicios...</div>
+  </div>
+</section>
+
+<!-- GALERÍA -->
+<section id="galeria">
+  <div class="section-header">
+    <div class="section-badge">📸 Nuestra galería</div>
+    <h2>Trabajos que hablan por sí solos</h2>
+    <p>Cada uña es una obra de arte</p>
+  </div>
+  <div class="galeria-grid" id="galeriaGrid">
+    <div class="galeria-item">💅</div>
+    <div class="galeria-item">✨</div>
+    <div class="galeria-item">💎</div>
+    <div class="galeria-item">🌸</div>
+    <div class="galeria-item">🎨</div>
+    <div class="galeria-item">💗</div>
+    <div class="galeria-item">⭐</div>
+    <div class="galeria-item">🌺</div>
+  </div>
+</section>
+
+<!-- RESEÑAS -->
+<section class="resenas-section" id="resenas">
+  <div class="section-header">
+    <div class="section-badge">⭐ Reseñas</div>
+    <h2>Lo que dicen nuestras clientas</h2>
+    <p>La satisfacción de nuestras clientas es nuestra mayor recompensa</p>
+  </div>
+  <div class="resenas-grid" id="resenasGrid">
+    <div class="loading">Cargando reseñas...</div>
+  </div>
+</section>
+
+<!-- FOOTER / CONTACTO -->
+<footer id="contacto">
+  <div class="footer-content">
+    <div class="footer-col">
+      <div class="footer-logo">Glamour✨Nails</div>
+      <p>El salón de uñas donde tu belleza es nuestra pasión. Calidad, creatividad y profesionalismo en cada visita.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Servicios</h4>
+      <a href="#servicios">Uñas Acrílicas</a>
+      <a href="#servicios">Manicure</a>
+      <a href="#servicios">Pedicure</a>
+      <a href="#servicios">Uñas en Gel</a>
+      <a href="#servicios">Nail Art</a>
+      <a href="#servicios">Spa de Manos</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <p>📞 +57 300 123 4567</p>
+      <p>📍 Calle 15 # 8-42, Bogotá</p>
+      <p>🕐 Lun-Sab: 9am - 7pm</p>
+      <p>📧 glamournails@email.com</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2024 Glamour Nails. Todos los derechos reservados. 💅</p>
+  </div>
+</footer>
+
+<!-- BOTÓN WHATSAPP FLOTANTE -->
+<a class="wa-flotante" id="waFlotante" href="#" target="_blank" title="Contáctanos por WhatsApp">💬</a>
+
+<!-- MODAL SERVICIO -->
+<div class="modal-overlay" id="modalOverlay" onclick="cerrarModal(event)">
+  <div class="modal" id="modal">
+    <div id="modalImgContainer"></div>
+    <div class="modal-body">
+      <div class="modal-header">
+        <div>
+          <div class="modal-categoria" id="modalCategoria"></div>
+          <div class="modal-nombre" id="modalNombre"></div>
+        </div>
+        <button class="modal-close" onclick="cerrarModal()">✕</button>
+      </div>
+      <div class="modal-precio" id="modalPrecio"></div>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-info">
+        <div class="modal-info-item">⏱️ <span id="modalDuracion"></span></div>
+        <div class="modal-info-item">⭐ <span id="modalCal"></span></div>
+      </div>
+      <a class="btn-whatsapp" id="modalWA" href="#" target="_blank">
+        💬 Contactar por WhatsApp
+      </a>
+
+      <!-- Calificaciones -->
+      <div class="modal-calificaciones">
+        <h4>⭐ Calificaciones</h4>
+        <div id="modalCalsLista"></div>
+
+        <!-- Formulario nueva calificación -->
+        <div class="form-calificacion">
+          <h4>📝 Deja tu calificación</h4>
+          <input type="text" class="form-input" id="calNombre" placeholder="Tu nombre" maxlength="50">
+          <div class="star-selector" id="starSelector">
+            <span onclick="seleccionarEstrellas(1)">⭐</span>
+            <span onclick="seleccionarEstrellas(2)">⭐</span>
+            <span onclick="seleccionarEstrellas(3)">⭐</span>
+            <span onclick="seleccionarEstrellas(4)">⭐</span>
+            <span onclick="seleccionarEstrellas(5)">⭐</span>
+          </div>
+          <textarea class="form-input" id="calComentario" placeholder="Tu comentario (opcional)" rows="3" maxlength="300"></textarea>
+          <button class="btn-enviar-cal" onclick="enviarCalificacion()">Enviar calificación</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Glamour Nails</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <h1>Glamour✨Nails</h1>
+      <p>Panel Administrativo</p>
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="admin@salon.com" value="admin@salon.com">
+    </div>
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" placeholder="••••••••" value="admin123" onkeydown="if(event.key==='Enter')login()">
+    </div>
+    <button class="btn-login" onclick="login()">Ingresar al panel</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ADMIN LAYOUT -->
+<div id="adminLayout" class="admin-layout" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h2>Glamour✨Nails</h2>
+      <p id="adminNombre">Admin</p>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item activo" onclick="mostrarPagina('dashboard', this)">
+        <span class="icon">📊</span> Dashboard
+      </button>
+      <button class="nav-item" onclick="mostrarPagina('servicios', this)">
+        <span class="icon">💅</span> Servicios
+      </button>
+      <button class="nav-item" onclick="mostrarPagina('calificaciones', this)">
+        <span class="icon">⭐</span> Calificaciones
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logout()">🚪 Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <div class="topbar">
+      <h2>Panel de administración</h2>
+      <span class="admin-name" id="topbarNombre"></span>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="pageDashboard" class="page activa">
+      <div class="page-header">
+        <div><h1>Dashboard</h1><p>Resumen general del salón</p></div>
+      </div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-icon">💅</div><div class="stat-num">–</div><div class="stat-label">Total servicios</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-num">–</div><div class="stat-label">Servicios activos</div></div>
+        <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-num">–</div><div class="stat-label">Calificaciones aprobadas</div></div>
+        <div class="stat-card"><div class="stat-icon">🕐</div><div class="stat-num">–</div><div class="stat-label">Pendientes de revisar</div></div>
+      </div>
+      <div class="tabla-container">
+        <div class="tabla-header"><h3>📋 Servicios recientes</h3></div>
+        <div id="dashboardServicios" style="padding:1rem;color:var(--texto-claro)">Cargando...</div>
+      </div>
+    </div>
+
+    <!-- SERVICIOS -->
+    <div id="pageServicios" class="page">
+      <div class="page-header">
+        <div><h1>Servicios</h1><p>Gestiona el catálogo de servicios</p></div>
+        <button class="btn btn-rosa" onclick="abrirFormServicio()">+ Agregar servicio</button>
+      </div>
+      <div class="tabla-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Imagen</th><th>Nombre</th><th>Categoría</th>
+              <th>Precio</th><th>Duración</th><th>Calificación</th>
+              <th>Estado</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="serviciosTabla"><tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--texto-claro)">Cargando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CALIFICACIONES -->
+    <div id="pageCalificaciones" class="page">
+      <div class="page-header">
+        <div><h1>Calificaciones</h1><p>Revisa y modera las reseñas</p></div>
+      </div>
+      <div class="tabla-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th><th>Servicio</th><th>Estrellas</th>
+              <th>Comentario</th><th>Estado</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="calsTabla"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--texto-claro)">Cargando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL SERVICIO -->
+<div class="modal-admin-overlay" id="modalServicioOverlay">
+  <div class="modal-admin">
+    <h3 id="modalServicioTitulo">Agregar servicio</h3>
+    <input type="hidden" id="servicioId">
+    <div class="form-row">
+      <div class="admin-form-group">
+        <label>Nombre *</label>
+        <input type="text" id="sNombre" placeholder="Ej: Uñas Acrílicas" maxlength="80">
+      </div>
+      <div class="admin-form-group">
+        <label>Categoría *</label>
+        <select id="sCategoria">
+          <option value="">Seleccionar...</option>
+          <option>Acrílicas</option><option>Manicure</option>
+          <option>Pedicure</option><option>Gel</option>
+          <option>Diseño</option><option>Spa</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="admin-form-group">
+        <label>Precio (COP) *</label>
+        <input type="number" id="sPrecio" placeholder="Ej: 45000" min="0">
+      </div>
+      <div class="admin-form-group">
+        <label>Duración (min) *</label>
+        <input type="number" id="sDuracion" placeholder="Ej: 60" min="0">
+      </div>
+    </div>
+    <div class="admin-form-group">
+      <label>Descripción *</label>
+      <textarea id="sDescripcion" rows="3" placeholder="Describe el servicio..." maxlength="500"></textarea>
+    </div>
+    <div class="admin-form-group">
+      <label>Imagen</label>
+      <div class="drop-zone" id="dropZone" onclick="document.getElementById('sImagen').click()">
+        <div id="dropContent">📷 Haz clic o arrastra una imagen aquí</div>
+        <input type="file" id="sImagen" accept="image/*" style="display:none" onchange="previewImagen(this)">
+      </div>
+    </div>
+    <div class="admin-form-group" id="activoGroup" style="display:none">
+      <label>Estado</label>
+      <select id="sActivo">
+        <option value="true">Activo</option>
+        <option value="false">Inactivo</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-gris" onclick="cerrarModalServicio()">Cancelar</button>
+      <button class="btn btn-rosa" onclick="guardarServicio()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESPONDER CALIFICACIÓN -->
+<div class="modal-admin-overlay" id="modalCalOverlay">
+  <div class="modal-admin">
+    <h3>Responder calificación</h3>
+    <input type="hidden" id="calId">
+    <div style="background:var(--gris);padding:1rem;border-radius:8px;margin-bottom:1rem">
+      <strong id="calClienteNombre"></strong>
+      <span style="color:var(--dorado)" id="calEstrellas"></span>
+      <p id="calComentarioTexto" style="color:var(--texto-claro);margin-top:0.3rem;font-style:italic"></p>
+    </div>
+    <div class="admin-form-group">
+      <label>Tu respuesta (opcional)</label>
+      <textarea id="calRespuesta" rows="3" placeholder="Responde al cliente..." maxlength="300" class="admin-form-group input"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-danger btn-sm" onclick="gestionarCal('rechazada')">Rechazar</button>
+      <button class="btn btn-gris" onclick="cerrarModalCal()">Cancelar</button>
+      <button class="btn btn-success btn-sm" onclick="gestionarCal('aprobada')">Aprobar</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>
