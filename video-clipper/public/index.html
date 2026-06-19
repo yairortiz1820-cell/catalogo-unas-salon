@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Clipper — Clips Virales con IA</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+
+    <header>
+      <h1>🎬 Video Clipper</h1>
+      <p>Pega un link de YouTube y la IA detecta y corta los mejores clips virales</p>
+    </header>
+
+    <!-- INPUT -->
+    <div class="card" id="input-section">
+      <input
+        type="url"
+        id="url-input"
+        placeholder="https://www.youtube.com/watch?v=..."
+        onkeydown="if(event.key==='Enter') startProcessing()"
+      />
+      <button id="process-btn" onclick="startProcessing()">
+        🚀 Generar Clips Virales
+      </button>
+    </div>
+
+    <!-- PROGRESO -->
+    <div class="card hidden" id="progress-section">
+      <div class="steps">
+        <div class="step" id="step-1">
+          <div class="step-icon">⬇️</div>
+          <div class="step-label">Descargar</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" id="step-2">
+          <div class="step-icon">🎙️</div>
+          <div class="step-label">Transcribir</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" id="step-3">
+          <div class="step-icon">🤖</div>
+          <div class="step-label">Analizar</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" id="step-4">
+          <div class="step-icon">✂️</div>
+          <div class="step-label">Editar</div>
+        </div>
+      </div>
+      <p id="progress-message" class="progress-msg">Iniciando...</p>
+      <div class="spinner"></div>
+    </div>
+
+    <!-- ERROR -->
+    <div id="error-section" class="card error hidden">
+      <p id="error-message"></p>
+      <button onclick="reset()">↩️ Intentar de nuevo</button>
+    </div>
+
+    <!-- CLIPS -->
+    <div id="clips-section" class="hidden">
+      <h2>📎 Clips Generados</h2>
+      <p class="clips-subtitle">Formato vertical 9:16 — listo para importar en CapCut, TikTok o Reels</p>
+      <div id="clips-grid"></div>
+      <button class="secondary" onclick="reset()">🔄 Procesar otro video</button>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
