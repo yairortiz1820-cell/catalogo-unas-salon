@@ -1,85 +1,85 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Este archivo proporciona orientación a Claude Code (claude.ai/code) al trabajar con el código de este repositorio.
 
-## Commands
+## Comandos
 
 ```bash
-# Run without MongoDB (in-memory data, resets on restart)
+# Ejecutar sin MongoDB (datos en memoria, se reinician al reiniciar)
 node server-demo.js
 
-# Run with MongoDB (production mode, requires .env)
+# Ejecutar con MongoDB (modo producción, requiere .env)
 npm start          # node server.js
 npm run dev        # nodemon server.js (hot reload)
 ```
 
-There is no test runner or linter configured in this project.
+Este proyecto no tiene test runner ni linter configurado.
 
-The `.claude/launch.json` configures the default run target as `server-demo.js` on port 3000.
+`.claude/launch.json` configura el objetivo de ejecución por defecto como `server-demo.js` en el puerto 3000.
 
-After starting either server:
-- Customer catalog: `http://localhost:3000`
-- Admin panel: `http://localhost:3000/admin` (credentials: `admin@salon.com` / `admin123`)
+Al iniciar cualquiera de los servidores:
+- Catálogo cliente: `http://localhost:3000`
+- Panel admin: `http://localhost:3000/admin` (credenciales: `admin@salon.com` / `admin123`)
 
-## Architecture
+## Arquitectura
 
-This app has **three parallel server implementations** that expose the same REST API:
+La app tiene **tres implementaciones de servidor en paralelo** que exponen la misma API REST:
 
-| File | Persistence | Use case |
-|------|-------------|----------|
-| `server.js` | MongoDB via Mongoose | Production |
-| `server-demo.js` | In-memory arrays | Local dev without DB |
-| `api/index.js` | In-memory arrays | Vercel serverless (exports Express app as a module) |
+| Archivo | Persistencia | Uso |
+|---------|--------------|-----|
+| `server.js` | MongoDB con Mongoose | Producción |
+| `server-demo.js` | Arrays en memoria | Desarrollo local sin BD |
+| `api/index.js` | Arrays en memoria | Vercel serverless (exporta la app Express como módulo) |
 
-`server.js` seeds the database with sample services and an admin user on first run. `server-demo.js` and `api/index.js` carry identical hardcoded seed data in module-level `let` arrays that reset on restart.
+`server.js` siembra la base de datos con servicios y un usuario admin al primer arranque. `server-demo.js` y `api/index.js` llevan datos iniciales hardcodeados en arrays `let` a nivel de módulo que se reinician al reinicar el proceso.
 
-### Request flow
+### Flujo de peticiones
 
-All three servers implement the same route surface:
+Los tres servidores implementan la misma superficie de rutas:
 
-- `POST /api/auth/login` → returns a JWT (8h expiry)
-- `GET /api/servicios` → public; supports `?categoria=` and `?buscar=` query params
-- `GET /api/servicios/admin/todos` → admin; includes inactive services
-- `POST|PUT|DELETE /api/servicios/:id` → admin; PUT/POST accept `multipart/form-data` for image upload
-- `GET /api/calificaciones/servicio/:id` → public; returns only `estado: 'aprobada'`
-- `POST /api/calificaciones` → public; new ratings enter as `estado: 'pendiente'`
-- `GET /api/calificaciones/admin/todas` → admin; all ratings with populated service name
-- `PUT /api/calificaciones/:id` → admin; approving a rating triggers recalculation of `calificacion_promedio` and `total_calificaciones` on the parent `Servicio`
+- `POST /api/auth/login` → devuelve un JWT (expiración 8h)
+- `GET /api/servicios` → público; acepta `?categoria=` y `?buscar=`
+- `GET /api/servicios/admin/todos` → admin; incluye servicios inactivos
+- `POST|PUT|DELETE /api/servicios/:id` → admin; PUT/POST aceptan `multipart/form-data` para subir imágenes
+- `GET /api/calificaciones/servicio/:id` → público; devuelve solo las de `estado: 'aprobada'`
+- `POST /api/calificaciones` → público; las nuevas calificaciones entran como `estado: 'pendiente'`
+- `GET /api/calificaciones/admin/todas` → admin; todas las calificaciones con el nombre del servicio populado
+- `PUT /api/calificaciones/:id` → admin; aprobar una calificación dispara el recálculo de `calificacion_promedio` y `total_calificaciones` en el `Servicio` padre
 - `GET /api/stats` → admin
 
-Admin routes require `Authorization: Bearer <token>` header. In `server.js` this is handled by `src/middleware/auth.js`; the demo servers use an equivalent inline function.
+Las rutas de admin requieren el header `Authorization: Bearer <token>`. En `server.js` esto lo gestiona `src/middleware/auth.js`; los servidores demo usan una función inline equivalente.
 
 ### Frontend
 
-Vanilla HTML/CSS/JS — no build step, no framework.
+HTML/CSS/JS vanilla — sin paso de compilación ni framework.
 
-- `public/index.html` + `public/js/app.js` + `public/css/styles.css` — customer-facing catalog
-- `public/admin.html` + `public/js/admin.js` + `public/css/admin.css` — admin panel
+- `public/index.html` + `public/js/app.js` + `public/css/styles.css` — catálogo para clientes
+- `public/admin.html` + `public/js/admin.js` + `public/css/admin.css` — panel de administración
 
-The frontend stores the JWT in `localStorage` and attaches it to every admin API call as a Bearer token.
+El frontend guarda el JWT en `localStorage` y lo adjunta como Bearer token en cada llamada a rutas de admin.
 
-### MongoDB models (`src/models/`)
+### Modelos MongoDB (`src/models/`)
 
-- `Servicio` — the catalog entry; `categoria` is enum-constrained to `['Acrílicas', 'Manicure', 'Pedicure', 'Gel', 'Diseño', 'Spa']`; `calificacion_promedio` and `total_calificaciones` are denormalized and recomputed on every rating approval/deletion
-- `Calificacion` — customer review; references `Servicio` by ObjectId; `estado` is `pendiente | aprobada | rechazada`
-- `Admin` — single admin user seeded on startup; password stored as bcrypt hash; `comparePassword()` instance method handles verification
+- `Servicio` — entrada del catálogo; `categoria` está limitada por enum a `['Acrílicas', 'Manicure', 'Pedicure', 'Gel', 'Diseño', 'Spa']`; `calificacion_promedio` y `total_calificaciones` están desnormalizados y se recalculan en cada aprobación o eliminación de calificación
+- `Calificacion` — reseña del cliente; referencia a `Servicio` por ObjectId; `estado` puede ser `pendiente | aprobada | rechazada`
+- `Admin` — usuario admin único sembrado al arranque; contraseña almacenada como hash bcrypt; el método de instancia `comparePassword()` gestiona la verificación
 
-### Image uploads
+### Subida de imágenes
 
-In `server.js`, multer stores uploaded images in the local `uploads/` directory (served as `/uploads/*`). The path is saved in `Servicio.imagen`. On Vercel, the `uploads/` directory is ephemeral and not shared across instances — use external URLs (e.g. Unsplash) for persistent images in that environment.
+En `server.js`, multer almacena las imágenes subidas en el directorio local `uploads/` (servido como `/uploads/*`). La ruta se guarda en `Servicio.imagen`. En Vercel, el directorio `uploads/` es efímero y no se comparte entre instancias — usar URLs externas (p. ej. Unsplash) para imágenes persistentes en ese entorno.
 
-## Environment variables
+## Variables de entorno
 
 ```
 PORT=3000
 MONGODB_URI=mongodb://localhost:27017/salon_unas
-JWT_SECRET=<secret>
-WHATSAPP_NUMBER=573001234567   # Used in the WhatsApp booking link on the frontend
+JWT_SECRET=<clave_secreta>
+WHATSAPP_NUMBER=573001234567   # Usado en el enlace de reserva por WhatsApp del frontend
 SALON_NAME=Salón de Uñas Glamour
 ```
 
-Copy `.env.example` to `.env` before running `server.js`. `server-demo.js` and `api/index.js` work without a `.env` file.
+Copiar `.env.example` a `.env` antes de ejecutar `server.js`. `server-demo.js` y `api/index.js` funcionan sin archivo `.env`.
 
-## Vercel deployment
+## Despliegue en Vercel
 
-`vercel.json` routes all traffic through `api/index.js`, which exports the Express app. Data is in-memory and resets on each cold start. The admin password is hardcoded as `admin123` in that file — not bcrypt-hashed.
+`vercel.json` redirige todo el tráfico a `api/index.js`, que exporta la app Express. Los datos están en memoria y se reinician en cada arranque en frío. La contraseña del admin está hardcodeada como `admin123` en ese archivo — no usa hash bcrypt.
