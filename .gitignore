@@ -3,3 +3,4 @@
 uploads/*
 !uploads/.gitkeep
 .vercel
+screenshot.js
