@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Joyas Esmeraldas — Catálogo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:           #0A0F0A;
+      --bg-card:      #0F1A12;
+      --esmeralda:    #52B788;
+      --esmeralda-dk: #2D6A4F;
+      --oro:          #C9A84C;
+      --blanco:       #E8F5E9;
+      --gris:         rgba(232,245,233,0.50);
+      --borde:        rgba(82,183,136,0.18);
+      --ease:         cubic-bezier(.4,0,.2,1);
+      --serif:        'Playfair Display', Georgia, serif;
+      --sans:         'DM Sans', system-ui, sans-serif;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--blanco); min-height: 100vh; }
+
+    /* ── BACK BAR ── */
+    .back-bar {
+      padding: .85rem 2rem;
+      background: rgba(0,0,0,.5);
+      border-bottom: 1px solid var(--borde);
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    .back-bar a {
+      font-size: .72rem; color: var(--gris);
+      text-decoration: none; letter-spacing: 1.5px;
+      text-transform: uppercase; transition: color .2s;
+    }
+    .back-bar a:hover { color: var(--esmeralda); }
+
+    /* ── HERO / COVER ── */
+    .cover {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      background:
+        radial-gradient(ellipse at 50% 55%, rgba(45,106,79,0.40) 0%, transparent 68%),
+        linear-gradient(to bottom, #020704 0%, #0A0F0A 100%);
+      position: relative; overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute; inset: 2.5rem;
+      border: 1px solid rgba(82,183,136,0.10);
+      pointer-events: none;
+    }
+    .cover::after {
+      content: '';
+      position: absolute; inset: 2.5rem;
+      border: 1px solid rgba(82,183,136,0.04);
+      transform: scale(.96);
+      pointer-events: none;
+    }
+    .gem { font-size: 2.8rem; margin-bottom: 1.6rem; filter: drop-shadow(0 0 24px rgba(82,183,136,0.5)); }
+    .eyebrow {
+      font-size: .68rem; letter-spacing: 5px; text-transform: uppercase;
+      color: var(--esmeralda); font-weight: 600; margin-bottom: 1.4rem;
+    }
+    .cover-title {
+      font-family: var(--serif);
+      font-size: clamp(3.2rem, 8vw, 6.5rem);
+      font-weight: 800; line-height: .92;
+      color: var(--blanco); margin-bottom: .6rem;
+    }
+    .cover-title em { color: var(--esmeralda); font-style: italic; }
+    .cover-sub {
+      font-family: var(--serif);
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      color: var(--oro); font-style: italic; margin-bottom: 1.8rem;
+    }
+    .cover-desc {
+      max-width: 460px; color: var(--gris);
+      font-size: .88rem; line-height: 2; margin-bottom: 3rem;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--esmeralda-dk), var(--esmeralda));
+      color: #fff; padding: .95rem 2.8rem;
+      font-size: .82rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      border-radius: 2px; text-decoration: none;
+      display: inline-block; transition: transform .25s, box-shadow .25s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 40px rgba(82,183,136,0.35);
+    }
+
+    /* ── CATALOG ── */
+    .catalogo { padding: 6rem 2rem; }
+    .catalogo-inner { max-width: 1260px; margin: 0 auto; }
+    .sec-label {
+      font-size: .66rem; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--esmeralda); font-weight: 600; display: block; margin-bottom: .8rem;
+    }
+    .sec-title {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700; margin-bottom: 2.8rem;
+    }
+    .sec-title em { color: var(--esmeralda); font-style: italic; }
+
+    /* ── FILTROS ── */
+    .filtros { display: flex; flex-wrap: wrap; gap: .55rem; margin-bottom: 3rem; }
+    .filtro {
+      padding: .42rem 1.3rem; border-radius: 30px;
+      border: 1px solid var(--borde);
+      background: transparent; color: var(--gris);
+      font-size: .75rem; font-weight: 600;
+      cursor: pointer; transition: all .22s;
+      font-family: var(--sans);
+    }
+    .filtro:hover { border-color: var(--esmeralda); color: var(--esmeralda); }
+    .filtro.activo { background: var(--esmeralda-dk); border-color: var(--esmeralda-dk); color: #fff; }
+
+    /* ── GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.8rem;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--borde);
+      border-radius: 6px; overflow: hidden;
+      transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 28px 64px rgba(0,0,0,.55);
+      border-color: rgba(82,183,136,0.42);
+    }
+    .card.oculto { display: none; }
+    .card-img-wrap { overflow: hidden; }
+    .card-img {
+      width: 100%; aspect-ratio: 3/4;
+      object-fit: cover; display: block;
+      transition: transform .5s var(--ease);
+    }
+    .card:hover .card-img { transform: scale(1.05); }
+    .card-body { padding: 1.4rem 1.5rem; }
+    .card-cat {
+      font-size: .62rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--esmeralda); font-weight: 600; margin-bottom: .5rem;
+    }
+    .card-nombre {
+      font-family: var(--serif);
+      font-size: 1.08rem; font-weight: 700;
+      color: var(--blanco); margin-bottom: .5rem; line-height: 1.3;
+    }
+    .card-desc {
+      font-size: .78rem; color: var(--gris);
+      line-height: 1.75; margin-bottom: 1.1rem;
+    }
+    .card-footer {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--borde); padding-top: 1rem;
+    }
+    .card-precio {
+      font-family: var(--serif);
+      font-size: 1.12rem; font-weight: 700; color: var(--oro);
+    }
+    .card-precio small {
+      font-family: var(--sans);
+      font-size: .65rem; color: var(--gris);
+      display: block; font-weight: 400;
+    }
+    .card-wa {
+      background: transparent;
+      border: 1px solid rgba(37,211,102,0.35);
+      color: #25D366; padding: .42rem .9rem;
+      border-radius: 3px; font-size: .7rem;
+      text-decoration: none; font-weight: 600;
+      transition: all .2s; white-space: nowrap;
+    }
+    .card-wa:hover { background: #25D366; color: #fff; }
+
+    /* ── CTA BOTTOM ── */
+    .cta-sec {
+      padding: 5rem 2rem;
+      text-align: center;
+      background: linear-gradient(135deg, #080F09, #040A05);
+      border-top: 1px solid var(--borde);
+    }
+    .cta-sec h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem,3vw,2.6rem);
+      margin: 1rem 0 1.4rem;
+    }
+    .cta-sec p { color: var(--gris); max-width: 440px; margin: 0 auto 2.5rem; line-height: 1.9; font-size: .88rem; }
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: .7rem;
+      background: linear-gradient(135deg, #128C7E, #25D366);
+      color: white; padding: 1rem 2.8rem;
+      font-size: .95rem; font-weight: 700;
+      border-radius: 3px; text-decoration: none;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .btn-wa:hover { transform: translateY(-3px); box-shadow: 0 16px 50px rgba(37,211,102,.35); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) {
+      .grid { grid-template-columns: 1fr; }
+      .cover-title { font-size: 3rem; }
+      .filtros { gap: .4rem; }
+      .back-bar { padding: .7rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- BACK BAR -->
+<div class="back-bar">
+  <a href="/">← Glamour Nails · Inicio</a>
+</div>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="gem">💎</div>
+  <div class="eyebrow">Colección exclusiva · Esmeraldas colombianas</div>
+  <h1 class="cover-title">Joyas<br><em>Esmeraldas</em></h1>
+  <p class="cover-sub">Elegancia natural en cada pieza</p>
+  <p class="cover-desc">
+    Piezas artesanales en plata 925 y oro 18K con esmeraldas colombianas.
+    Cada joya es única, diseñada para realzar tu belleza.
+  </p>
+  <a href="#coleccion" class="btn-primary">Ver colección ↓</a>
+</section>
+
+<!-- CATÁLOGO -->
+<section class="catalogo" id="coleccion">
+  <div class="catalogo-inner">
+    <span class="sec-label">Colección 2024 · 15 piezas</span>
+    <h2 class="sec-title">Nuestra <em>colección</em></h2>
+
+    <!-- FILTROS -->
+    <div class="filtros">
+      <button class="filtro activo" onclick="filtrar('Todos',this)">Todos (15)</button>
+      <button class="filtro" onclick="filtrar('Anillos',this)">Anillos</button>
+      <button class="filtro" onclick="filtrar('Aretes',this)">Aretes</button>
+      <button class="filtro" onclick="filtrar('Pulseras',this)">Pulseras</button>
+      <button class="filtro" onclick="filtrar('Conjuntos',this)">Conjuntos</button>
+      <button class="filtro" onclick="filtrar('Dijes',this)">Dijes</button>
+    </div>
+
+    <!-- GRID -->
+    <div class="grid" id="joyasGrid"></div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-sec">
+  <span class="sec-label">¿Te enamoraste de alguna pieza?</span>
+  <h2>Escríbenos por WhatsApp</h2>
+  <p>Consulta disponibilidad, tallas y opciones de personalización. Envíos a todo Colombia.</p>
+  <a class="btn-wa" id="btnWaMain" href="#" target="_blank">💬 Contactar por WhatsApp</a>
+</section>
+
+<script>
+// ── CONFIGURACIÓN ────────────────────────────────────────────────────────
+// Cambia este número por el tuyo real (formato: 57 + número sin el 0 inicial)
+var WA = '573001234567';
+
+// ── DATOS DEL CATÁLOGO ───────────────────────────────────────────────────
+// Para editar precios, nombres o descripciones modifica este array.
+const JOYAS = [
+  {
+    img: '/joyas/80cd5d93-23436.jpg',
+    nombre: 'Anillo Solitario con Halo de Esmeralda',
+    desc: 'Plata de ley con halo de diamantes y esmeralda redonda central. Elegancia clásica y atemporal.',
+    precio: 280000,
+    cat: 'Anillos'
+  },
+  {
+    img: '/joyas/e231a8fb-23443.jpg',
+    nombre: 'Conjunto Floral Aretes + Dije',
+    desc: 'Set completo: aretes y dije en forma de flor, plata 925 con esmeralda central. Perfecto para regalar.',
+    precio: 195000,
+    cat: 'Conjuntos'
+  },
+  {
+    img: '/joyas/26726db6-23438.jpg',
+    nombre: 'Pulsera Triple Estación con Esmeraldas',
+    desc: 'Pulsera en plata con tres estaciones de esmeraldas y diamantes. Delicada y luminosa.',
+    precio: 245000,
+    cat: 'Pulseras'
+  },
+  {
+    img: '/joyas/511f312e-23425.jpg',
+    nombre: 'Aretes Lazo en Plata 925',
+    desc: 'Aretes en forma de moño en plata 925 con esmeralda incrustada. Juveniles y elegantes.',
+    precio: 125000,
+    cat: 'Aretes'
+  },
+  {
+    img: '/joyas/cebbce1a-23408.jpg',
+    nombre: 'Anillo Gota Chevron Oro 18K',
+    desc: 'Anillo estilo chevron en oro 18K con esmeralda pera. Diseño moderno y sofisticado.',
+    precio: 320000,
+    cat: 'Anillos'
+  },
+  {
+    img: '/joyas/8a969cee-23405.jpg',
+    nombre: 'Anillo Gota Chevron Oro 18K — Perfil',
+    desc: 'La misma pieza chevron vista de perfil para apreciar el volumen del engaste. Oro 18K.',
+    precio: 320000,
+    cat: 'Anillos'
+  },
+  {
+    img: '/joyas/451d06e2-23422.jpg',
+    nombre: 'Dije Minimalista Baguette Oro 18K',
+    desc: 'Colgante minimalista en oro 18K con esmeralda baguette rectangular. Ideal para usar solo o en capas.',
+    precio: 175000,
+    cat: 'Dijes'
+  },
+  {
+    img: '/joyas/c5b83988-23424.jpg',
+    nombre: 'Aretes Corazón Calado Plata 925',
+    desc: 'Aretes en forma de corazón calado con esmeralda en plata 925. Románticos y detallados.',
+    precio: 145000,
+    cat: 'Aretes'
+  },
+  {
+    img: '/joyas/d7fa7672-23419.jpg',
+    nombre: 'Aretes Corazón Abierto con Diamantes',
+    desc: 'Corazón abierto en plata 925 combinando esmeralda y diamantes. Brillo especial para cada ocasión.',
+    precio: 165000,
+    cat: 'Aretes'
+  },
+  {
+    img: '/joyas/2cfbd043-23411.jpg',
+    nombre: 'Aretes Flor Tejida Plata 925',
+    desc: 'Aretes en forma de flor tejida en plata 925 con esmeralda central. Artesanales y únicos.',
+    precio: 135000,
+    cat: 'Aretes'
+  },
+  {
+    img: '/joyas/e70f5179-23409.jpg',
+    nombre: 'Aretes Corona Plata 925',
+    desc: 'Aretes en forma de corona en plata 925 con esmeralda. Presentación en elegante caja rosa.',
+    precio: 130000,
+    cat: 'Aretes'
+  },
+  {
+    img: '/joyas/a9bd3158-23407.jpg',
+    nombre: 'Conjunto Halo Aretes + Dije',
+    desc: 'Set de aretes y dije con diseño halo en plata 925 y esmeralda. Para cualquier ocasión.',
+    precio: 215000,
+    cat: 'Conjuntos'
+  },
+  {
+    img: '/joyas/84625bde-23417.jpg',
+    nombre: 'Aretes Corona — Edición Clásica',
+    desc: 'Aretes corona en plata con esmeralda, presentación en caja negra de lujo. Variante clásica.',
+    precio: 130000,
+    cat: 'Aretes'
+  },
+  {
+    img: '/joyas/2c5530dc-23403.jpg',
+    nombre: 'Aretes Solitario Oro 18K — 2 Tamaños',
+    desc: 'Aretes solitario en oro 18K con esmeralda redonda. Disponibles en tamaño pequeño y mediano.',
+    precio: 185000,
+    cat: 'Aretes'
+  },
+  {
+    img: '/joyas/d9fadf81-23399.jpg',
+    nombre: 'Colección de Dijes Oro 18K',
+    desc: 'Variedad de colgantes artesanales en oro 18K con esmeraldas en diferentes formas. Consulta disponibilidad.',
+    precio: 155000,
+    cat: 'Dijes'
+  }
+];
+
+// ── HELPERS ──────────────────────────────────────────────────────────────
+function cop(n) { return '$ ' + n.toLocaleString('es-CO'); }
+
+function waLink(nombre) {
+  const txt = encodeURIComponent('Hola! Me interesa la joya: *' + nombre + '*. ¿Está disponible?');
+  return 'https://wa.me/' + WA + '?text=' + txt;
+}
+
+// ── RENDER GRID ───────────────────────────────────────────────────────────
+function render() {
+  document.getElementById('joyasGrid').innerHTML = JOYAS.map(j => `
+    <div class="card" data-cat="${j.cat}">
+      <div class="card-img-wrap">
+        <img class="card-img" src="${j.img}" alt="${j.nombre}" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-cat">${j.cat}</div>
+        <div class="card-nombre">${j.nombre}</div>
+        <p class="card-desc">${j.desc}</p>
+        <div class="card-footer">
+          <div class="card-precio">
+            ${cop(j.precio)}
+            <small>COP · precio aprox.</small>
+          </div>
+          <a class="card-wa" href="${waLink(j.nombre)}" target="_blank">💬 Consultar</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── FILTRO ────────────────────────────────────────────────────────────────
+function filtrar(cat, btn) {
+  document.querySelectorAll('.filtro').forEach(b => b.classList.remove('activo'));
+  btn.classList.add('activo');
+  document.querySelectorAll('#joyasGrid .card').forEach(c => {
+    c.classList.toggle('oculto', cat !== 'Todos' && c.dataset.cat !== cat);
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+const waMainTxt = encodeURIComponent('Hola! Vi el catálogo de Joyas Esmeraldas y me gustaría más información.');
+document.getElementById('btnWaMain').href = 'https://wa.me/' + WA + '?text=' + waMainTxt;
+render();
+</script>
+</body>
+</html>
