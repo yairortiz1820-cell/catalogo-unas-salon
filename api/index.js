@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
 const bcrypt = require('bcryptjs');
+const fs = require('fs');
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
@@ -46,6 +47,24 @@ let tiendas = [];
 let productos = [];
 let tId = 1000;
 let pId = 2000;
+
+const DATA_FILE = '/tmp/catalogo-tiendas.json';
+
+function loadData() {
+  try {
+    const d = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+    if (Array.isArray(d.tiendas)) tiendas = d.tiendas;
+    if (Array.isArray(d.productos)) productos = d.productos;
+    if (d.tId) tId = d.tId;
+    if (d.pId) pId = d.pId;
+  } catch (e) { /* primera vez */ }
+}
+
+function saveData() {
+  try { fs.writeFileSync(DATA_FILE, JSON.stringify({ tiendas, productos, tId, pId })); } catch (e) {}
+}
+
+loadData();
 
 function slugify(str) {
   return (str || '').toLowerCase()
@@ -172,6 +191,7 @@ app.post('/api/tiendas', (req, res) => {
     fecha: new Date().toISOString()
   };
   tiendas.push(tienda);
+  saveData();
   res.status(201).json({ slug, nombre, _id: tienda._id, link: `/tienda/${slug}` });
 });
 
@@ -210,6 +230,7 @@ app.put('/api/tiendas/:slug', tiendaAuthMW, (req, res) => {
   if (descripcion !== undefined) tiendas[idx].descripcion = descripcion;
   if (logo !== undefined) tiendas[idx].logo = logo;
   if (whatsapp) tiendas[idx].whatsapp = whatsapp.replace(/\D/g, '');
+  saveData();
   const t = tiendas[idx];
   res.json({ nombre: t.nombre, slug: t.slug, descripcion: t.descripcion, logo: t.logo, whatsapp: t.whatsapp });
 });
@@ -225,7 +246,7 @@ app.get('/api/tiendas/:slug/productos', tiendaAuthMW, (req, res) => {
 app.post('/api/tiendas/:slug/productos', tiendaAuthMW, (req, res) => {
   const tienda = tiendas.find(t => t.slug === req.params.slug);
   if (!tienda || tienda._id !== req.storeData.tienda_id) return res.status(403).json({ error: 'Sin acceso' });
-  const { nombre, precio, descripcion, imagen, categoria } = req.body;
+  const { nombre, precio, descripcion, imagen, categoria, stock } = req.body;
   if (!nombre || precio === undefined || precio === '') return res.status(400).json({ error: 'Nombre y precio requeridos' });
   const prod = {
     _id: String(++pId),
@@ -235,10 +256,12 @@ app.post('/api/tiendas/:slug/productos', tiendaAuthMW, (req, res) => {
     descripcion: descripcion || '',
     imagen: imagen || '',
     categoria: categoria || '',
+    stock: (stock !== undefined && stock !== null && stock !== '') ? parseInt(stock) : null,
     disponible: true,
     fecha: new Date().toISOString()
   };
   productos.push(prod);
+  saveData();
   res.status(201).json(prod);
 });
 
@@ -257,7 +280,7 @@ app.put('/api/tiendas/:slug/productos/:id', tiendaAuthMW, (req, res) => {
   if (!tienda || tienda._id !== req.storeData.tienda_id) return res.status(403).json({ error: 'Sin acceso' });
   const idx = productos.findIndex(p => p._id === req.params.id && p.tienda_id === tienda._id);
   if (idx === -1) return res.status(404).json({ error: 'No encontrado' });
-  const { nombre, precio, descripcion, imagen, categoria, disponible } = req.body;
+  const { nombre, precio, descripcion, imagen, categoria, disponible, stock } = req.body;
   productos[idx] = {
     ...productos[idx],
     nombre: nombre ?? productos[idx].nombre,
@@ -265,8 +288,10 @@ app.put('/api/tiendas/:slug/productos/:id', tiendaAuthMW, (req, res) => {
     descripcion: descripcion ?? productos[idx].descripcion,
     imagen: imagen ?? productos[idx].imagen,
     categoria: categoria ?? productos[idx].categoria,
-    disponible: disponible !== undefined ? disponible : productos[idx].disponible
+    disponible: disponible !== undefined ? disponible : productos[idx].disponible,
+    stock: stock !== undefined ? (stock === null || stock === '' ? null : parseInt(stock)) : productos[idx].stock
   };
+  saveData();
   res.json(productos[idx]);
 });
 
@@ -277,7 +302,17 @@ app.delete('/api/tiendas/:slug/productos/:id', tiendaAuthMW, (req, res) => {
   const before = productos.length;
   productos = productos.filter(p => !(p._id === req.params.id && p.tienda_id === tienda._id));
   if (productos.length === before) return res.status(404).json({ error: 'No encontrado' });
+  saveData();
   res.json({ mensaje: 'Eliminado' });
+});
+
+// Producto público por id
+app.get('/api/tiendas/:slug/productos/:id', (req, res) => {
+  const tienda = tiendas.find(t => t.slug === req.params.slug && t.activa);
+  if (!tienda) return res.status(404).json({ error: 'Tienda no encontrada' });
+  const prod = productos.find(p => p._id === req.params.id && p.tienda_id === tienda._id && p.disponible);
+  if (!prod) return res.status(404).json({ error: 'Producto no encontrado' });
+  res.json({ ...prod, tienda: { nombre: tienda.nombre, slug: tienda.slug, whatsapp: tienda.whatsapp } });
 });
 
 // ─── HTML SERVING ──────────────────────────────────────────────────────────────
@@ -285,6 +320,7 @@ app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, '../public/adm
 app.get('/catalogo-joyas', (req, res) => res.sendFile(path.join(__dirname, '../public/catalogo-joyas.html')));
 app.get('/crear-tienda', (req, res) => res.sendFile(path.join(__dirname, '../public/crear-tienda.html')));
 app.get('/tienda/:slug/admin', (req, res) => res.sendFile(path.join(__dirname, '../public/admin-tienda.html')));
+app.get('/tienda/:slug/p/:id', (req, res) => res.sendFile(path.join(__dirname, '../public/producto.html')));
 app.get('/tienda/:slug', (req, res) => res.sendFile(path.join(__dirname, '../public/tienda.html')));
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../public/index.html')));
 

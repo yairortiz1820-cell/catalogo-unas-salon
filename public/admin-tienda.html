@@ -125,13 +125,18 @@
     .prod-meta { font-size: .72rem; color: var(--sub); }
     .prod-unavail { color: var(--error); font-weight: 600; }
     .prod-actions { display: flex; flex-direction: column; justify-content: center; gap: .4rem; padding: .6rem .7rem; background: #FAFAFA; }
-    .btn-edit, .btn-del {
+    .btn-edit, .btn-del, .btn-link {
       border: none; border-radius: 7px; cursor: pointer;
       padding: .4rem .7rem; font-size: .72rem; font-weight: 700;
     }
     .btn-edit { background: #EFF6FF; color: #3B82F6; }
     .btn-del { background: #FEF2F2; color: var(--error); }
     .btn-toggle { background: #F0FDF4; color: var(--verde-dk); border: none; border-radius: 7px; cursor: pointer; padding: .4rem .7rem; font-size: .72rem; font-weight: 700; }
+    .btn-link { background: #F8FAFC; color: #64748B; border: 1px solid var(--borde); }
+    .prod-stock { font-size: .68rem; font-weight: 700; }
+    .stock-ok { color: #2563EB; }
+    .stock-low { color: #EA580C; }
+    .stock-zero { color: #DC2626; }
 
     /* ── EMPTY ── */
     .empty-list { text-align: center; padding: 4rem 1.5rem; color: var(--sub); }
@@ -338,6 +343,10 @@
         <label>Descripción</label>
         <textarea id="mDesc" placeholder="Describe el producto, materiales, tallas disponibles..."></textarea>
       </div>
+      <div class="field">
+        <label>Unidades en inventario <span style="font-weight:400;text-transform:none;letter-spacing:0">(dejar vacío = sin límite)</span></label>
+        <input type="number" id="mStock" placeholder="Ej: 10" min="0" inputmode="numeric">
+      </div>
 
       <button class="btn-save" id="btnSave" onclick="saveProduct()">
         <span class="s-spinner" id="saveSpin"></span>
@@ -457,7 +466,14 @@ function renderProducts() {
   }
   document.getElementById('emptyList').classList.add('hidden');
 
-  document.getElementById('productList').innerHTML = products.map(p => `
+  document.getElementById('productList').innerHTML = products.map(p => {
+    var stockHtml = '';
+    if (p.stock !== null && p.stock !== undefined) {
+      if (p.stock <= 0) stockHtml = '<span class="prod-stock stock-zero">✗ Agotado</span>';
+      else if (p.stock <= 5) stockHtml = '<span class="prod-stock stock-low">⚡ ' + p.stock + ' unid.</span>';
+      else stockHtml = '<span class="prod-stock stock-ok">📦 ' + p.stock + ' unid.</span>';
+    }
+    return `
     <div class="prod-card">
       ${p.imagen
         ? '<img class="prod-img" src="' + p.imagen + '" alt="' + esc(p.nombre) + '">'
@@ -468,15 +484,17 @@ function renderProducts() {
         <div class="prod-meta">
           ${p.categoria ? p.categoria + ' · ' : ''}
           ${p.disponible ? '<span style="color:var(--verde-dk)">✓ Visible</span>' : '<span class="prod-unavail">✗ Oculto</span>'}
+          ${stockHtml ? ' · ' + stockHtml : ''}
         </div>
       </div>
       <div class="prod-actions">
         <button class="btn-edit" onclick="openEdit('${p._id}')">✏️ Editar</button>
         <button class="btn-toggle" onclick="toggleAvail('${p._id}',${!p.disponible})">${p.disponible ? '🚫 Ocultar' : '✅ Mostrar'}</button>
+        <button class="btn-link" onclick="copyProdLink('${p._id}')" title="Copiar link para Facebook Ads">🔗 Link</button>
         <button class="btn-del" onclick="delProduct('${p._id}')">🗑 Borrar</button>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
 // ── MODAL ─────────────────────────────────────────────────────────────────────
@@ -494,6 +512,7 @@ function openModal() {
   document.getElementById('imgPlaceholder').style.display = '';
   document.getElementById('imgUrlInp').value = '';
   document.getElementById('urlInpWrap').classList.remove('show');
+  document.getElementById('mStock').value = '';
   document.getElementById('saveText').textContent = 'Guardar producto';
   document.getElementById('modalOverlay').classList.add('show');
   document.body.style.overflow = 'hidden';
@@ -521,6 +540,7 @@ function openEdit(id) {
   }
   document.getElementById('imgUrlInp').value = p.imagen || '';
   document.getElementById('urlInpWrap').classList.remove('show');
+  document.getElementById('mStock').value = (p.stock !== null && p.stock !== undefined) ? p.stock : '';
   document.getElementById('saveText').textContent = 'Guardar cambios';
   document.getElementById('modalOverlay').classList.add('show');
   document.body.style.overflow = 'hidden';
@@ -589,12 +609,14 @@ async function saveProduct() {
 
   var imagen = pendingImageData || pendingImageUrl || '';
 
+  var stockVal = document.getElementById('mStock').value.trim();
   var body = {
     nombre,
     precio: parseFloat(precio),
     descripcion: document.getElementById('mDesc').value.trim(),
     categoria: document.getElementById('mCategoria').value.trim(),
     imagen,
+    stock: stockVal === '' ? null : parseInt(stockVal),
     disponible: true
   };
 
@@ -668,6 +690,17 @@ function copyLink() {
     var el = document.createElement('textarea');
     el.value = link; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
     toast('¡Enlace copiado! ✅');
+  }
+}
+
+function copyProdLink(id) {
+  var link = window.location.origin + '/tienda/' + storeSlug + '/p/' + id;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(link).then(() => toast('🔗 Link copiado — úsalo en Facebook Ads o Instagram'));
+  } else {
+    var el = document.createElement('textarea');
+    el.value = link; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+    toast('🔗 Link del producto copiado');
   }
 }
 
