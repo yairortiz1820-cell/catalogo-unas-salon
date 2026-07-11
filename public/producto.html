@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Producto</title>
+  <!-- OG tags se sobreescriben con JS -->
+  <meta property="og:type" content="product">
+  <meta property="og:locale" content="es_CO">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    :root {
+      --verde:#22C55E; --verde-dk:#16A34A; --wa:#25D366;
+      --texto:#0F172A; --sub:#64748B; --fondo:#F8FAFC; --borde:#E2E8F0; --card:#fff;
+    }
+    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--fondo); color:var(--texto); min-height:100vh; }
+
+    /* TOPBAR */
+    .topbar {
+      position:sticky; top:0; z-index:100; background:#fff;
+      border-bottom:1px solid var(--borde);
+      display:flex; align-items:center; gap:.7rem; padding:.8rem 1rem;
+    }
+    .back-btn { font-size:1.1rem; text-decoration:none; color:var(--verde-dk); font-weight:700; flex-shrink:0; }
+    .topbar-store { font-size:.85rem; font-weight:700; color:var(--texto); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .topbar-cat { font-size:.68rem; color:var(--sub); flex-shrink:0; }
+
+    /* IMAGEN */
+    .product-img-wrap { position:relative; width:100%; padding-top:100%; background:#F1F5F9; overflow:hidden; }
+    .product-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .no-img { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:5rem; color:#CBD5E1; }
+
+    /* BADGES */
+    .badge-row { display:flex; gap:.5rem; padding:1rem 1rem .4rem; flex-wrap:wrap; }
+    .badge { display:inline-flex; align-items:center; gap:.25rem; padding:.3rem .75rem; border-radius:30px; font-size:.72rem; font-weight:700; }
+    .badge-cat { background:#F0FDF4; color:var(--verde-dk); }
+    .badge-stock-ok { background:#EFF6FF; color:#2563EB; }
+    .badge-stock-low { background:#FFF7ED; color:#EA580C; }
+    .badge-agotado { background:#FEF2F2; color:#DC2626; }
+
+    /* DETALLE */
+    .detail { padding:.5rem 1rem 1.5rem; }
+    .product-nombre { font-size:1.4rem; font-weight:800; line-height:1.2; margin-bottom:.6rem; }
+    .product-precio { font-size:1.8rem; font-weight:900; color:var(--verde-dk); margin-bottom:.5rem; }
+    .product-desc { font-size:.9rem; color:var(--sub); line-height:1.7; margin-bottom:1.5rem; }
+
+    /* DIVIDER */
+    .divider { border:none; border-top:1px solid var(--borde); margin:1rem 0; }
+
+    /* ACTIONS */
+    .actions { padding:0 1rem 2rem; display:flex; flex-direction:column; gap:.8rem; }
+    .btn-add {
+      padding:1rem; border:none; border-radius:14px; cursor:pointer;
+      font-size:1rem; font-weight:800; display:flex; align-items:center; justify-content:center; gap:.5rem;
+      background:linear-gradient(135deg,var(--verde-dk),var(--verde)); color:white;
+      transition:opacity .2s;
+    }
+    .btn-add:active { opacity:.88; }
+    .btn-add.en-carrito { background:#DCFCE7; color:var(--verde-dk); border:1.5px solid var(--verde); }
+    .btn-add:disabled { background:#E2E8F0; color:#94A3B8; cursor:default; }
+    .btn-wa {
+      padding:.95rem; border:none; border-radius:14px; cursor:pointer;
+      font-size:.95rem; font-weight:800; display:flex; align-items:center; justify-content:center; gap:.5rem;
+      background:var(--wa); color:white; transition:opacity .2s;
+    }
+    .btn-wa:active { opacity:.88; }
+    .btn-share {
+      padding:.85rem; border:1.5px solid var(--borde); border-radius:14px; cursor:pointer;
+      font-size:.88rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:.5rem;
+      background:var(--card); color:var(--texto); transition:background .15s;
+    }
+    .btn-share:active { background:var(--borde); }
+
+    /* STORE CARD */
+    .store-card {
+      margin:0 1rem 2rem; padding:1rem;
+      background:#fff; border-radius:14px; border:1px solid var(--borde);
+    }
+    .store-card-label { font-size:.68rem; font-weight:700; color:var(--sub); text-transform:uppercase; margin-bottom:.4rem; }
+    .store-card-name { font-size:1rem; font-weight:800; margin-bottom:.3rem; }
+    .store-link { font-size:.8rem; color:var(--verde-dk); text-decoration:none; font-weight:700; }
+
+    /* LOADING */
+    .loader { display:flex; align-items:center; justify-content:center; min-height:70vh; flex-direction:column; gap:1rem; color:var(--sub); }
+    .loader-ring { width:44px; height:44px; border:3px solid #E2E8F0; border-top-color:var(--verde); border-radius:50%; animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* NOT FOUND */
+    .not-found { text-align:center; padding:5rem 2rem; display:none; }
+    .not-found.show { display:block; }
+
+    /* TOAST */
+    .toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(80px); background:#0F172A; color:white; padding:.7rem 1.4rem; border-radius:30px; font-size:.82rem; font-weight:600; transition:transform .3s; z-index:999; white-space:nowrap; pointer-events:none; }
+    .toast.show { transform:translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<div id="loader" class="loader">
+  <div class="loader-ring"></div>
+  <div>Cargando producto...</div>
+</div>
+
+<div id="main" style="display:none">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <a class="back-btn" id="backLink" href="#">← Volver</a>
+    <div class="topbar-store" id="topStoreName"></div>
+  </div>
+
+  <!-- IMAGEN -->
+  <div class="product-img-wrap">
+    <img class="product-img" id="prodImg" src="" alt="" style="display:none">
+    <div class="no-img" id="noImg">📦</div>
+  </div>
+
+  <!-- BADGES -->
+  <div class="badge-row" id="badgeRow"></div>
+
+  <!-- DETALLE -->
+  <div class="detail">
+    <div class="product-nombre" id="prodNombre"></div>
+    <div class="product-precio" id="prodPrecio"></div>
+    <p class="product-desc" id="prodDesc" style="display:none"></p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <button class="btn-add" id="btnAdd" onclick="toggleCart()"></button>
+    <button class="btn-wa" onclick="consultarWa()">💬 Consultar por WhatsApp</button>
+    <button class="btn-share" onclick="shareProduct()">📤 Compartir este producto</button>
+  </div>
+
+  <!-- STORE CARD -->
+  <div class="store-card">
+    <div class="store-card-label">Vendido por</div>
+    <div class="store-card-name" id="storeCardName"></div>
+    <a class="store-link" id="storeCardLink" href="#">Ver toda la tienda →</a>
+  </div>
+</div>
+
+<div class="not-found" id="notFound">
+  <div style="font-size:3rem;margin-bottom:1rem">🔍</div>
+  <h3 style="font-size:1.2rem;margin-bottom:.5rem">Producto no encontrado</h3>
+  <p style="color:var(--sub);margin-bottom:1.5rem">Este producto no existe o no está disponible.</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var parts = window.location.pathname.split('/');
+// /tienda/:slug/p/:id
+var storeSlug = parts[2] || '';
+var prodId = parts[4] || '';
+var prod = null;
+var CART_KEY = 'cart_' + storeSlug;
+var cart = [];
+
+async function init() {
+  cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+  try {
+    var r = await fetch('/api/tiendas/' + storeSlug + '/productos/' + prodId);
+    if (!r.ok) throw new Error('not found');
+    prod = await r.json();
+  } catch (e) {
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('notFound').classList.add('show');
+    return;
+  }
+
+  var tienda = prod.tienda || {};
+  var storeLink = '/tienda/' + storeSlug;
+
+  // Meta tags OG para Facebook
+  setMeta('og:title', prod.nombre + ' — ' + tienda.nombre);
+  setMeta('og:description', prod.descripcion || ('$ ' + Number(prod.precio).toLocaleString('es-CO')));
+  if (prod.imagen && !prod.imagen.startsWith('data:')) setMeta('og:image', prod.imagen);
+
+  document.title = prod.nombre + ' — ' + tienda.nombre;
+
+  document.getElementById('backLink').href = storeLink;
+  document.getElementById('topStoreName').textContent = tienda.nombre || '';
+  document.getElementById('storeCardName').textContent = tienda.nombre || '';
+  document.getElementById('storeCardLink').href = storeLink;
+
+  if (prod.imagen) {
+    document.getElementById('prodImg').src = prod.imagen;
+    document.getElementById('prodImg').alt = prod.nombre;
+    document.getElementById('prodImg').style.display = '';
+    document.getElementById('noImg').style.display = 'none';
+  }
+
+  document.getElementById('prodNombre').textContent = prod.nombre;
+  document.getElementById('prodPrecio').textContent = cop(prod.precio);
+
+  if (prod.descripcion) {
+    document.getElementById('prodDesc').textContent = prod.descripcion;
+    document.getElementById('prodDesc').style.display = '';
+  }
+
+  // Badges
+  var badges = '';
+  if (prod.categoria) badges += '<span class="badge badge-cat">📂 ' + esc(prod.categoria) + '</span>';
+  if (prod.stock === null) {
+    // sin control de stock
+  } else if (prod.stock <= 0) {
+    badges += '<span class="badge badge-agotado">✗ Agotado</span>';
+  } else if (prod.stock <= 5) {
+    badges += '<span class="badge badge-stock-low">⚡ Últimas ' + prod.stock + ' unidades</span>';
+  } else {
+    badges += '<span class="badge badge-stock-ok">✓ ' + prod.stock + ' disponibles</span>';
+  }
+  document.getElementById('badgeRow').innerHTML = badges;
+
+  // Botón carrito
+  renderCartBtn();
+
+  document.getElementById('loader').style.display = 'none';
+  document.getElementById('main').style.display = '';
+}
+
+function renderCartBtn() {
+  var btn = document.getElementById('btnAdd');
+  var agotado = prod.stock !== null && prod.stock <= 0;
+  var inCart = cart.some(c => c._id === prod._id);
+  if (agotado) {
+    btn.textContent = 'Producto agotado';
+    btn.disabled = true;
+    btn.className = 'btn-add';
+  } else if (inCart) {
+    btn.textContent = '✓ En tu carrito — Ver tienda';
+    btn.className = 'btn-add en-carrito';
+    btn.disabled = false;
+  } else {
+    btn.textContent = '🛒 Agregar al carrito';
+    btn.className = 'btn-add';
+    btn.disabled = false;
+  }
+}
+
+function toggleCart() {
+  var inCart = cart.some(c => c._id === prod._id);
+  if (inCart) {
+    window.location.href = '/tienda/' + storeSlug;
+    return;
+  }
+  cart.push({ _id: prod._id, nombre: prod.nombre, precio: prod.precio, imagen: prod.imagen || '', qty: 1 });
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  renderCartBtn();
+  toast('✅ Agregado al carrito');
+}
+
+function consultarWa() {
+  var tienda = prod.tienda || {};
+  var msg = 'Hola *' + (tienda.nombre || 'tienda') + '* 👋\n\nMe interesa este producto:\n\n🛍️ *' + prod.nombre + '*\n💰 ' + cop(prod.precio) + '\n\n¿Está disponible? ¿Cómo puedo comprarlo?';
+  window.open('https://wa.me/' + (tienda.whatsapp || '') + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+async function shareProduct() {
+  var url = window.location.href;
+  var tienda = prod.tienda || {};
+  var text = prod.nombre + ' — ' + cop(prod.precio) + '\n' + tienda.nombre;
+  if (navigator.share) {
+    try { await navigator.share({ title: prod.nombre, text, url }); return; } catch (e) {}
+  }
+  if (navigator.clipboard) {
+    await navigator.clipboard.writeText(url);
+    toast('🔗 Link copiado — Compártelo en Facebook, Instagram o WhatsApp');
+  }
+}
+
+function setMeta(prop, content) {
+  var el = document.querySelector('meta[property="' + prop + '"]') || document.createElement('meta');
+  el.setAttribute('property', prop);
+  el.setAttribute('content', content);
+  if (!el.parentNode) document.head.appendChild(el);
+}
+
+function cop(n) { return '$ ' + Number(n).toLocaleString('es-CO'); }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+init();
+</script>
+</body>
+</html>
