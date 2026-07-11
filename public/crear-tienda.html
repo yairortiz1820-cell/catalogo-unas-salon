@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crear tienda — CatalogoYa</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="brand-icon">🏬</span>
+      <div>
+        <h1>CatalogoYa</h1>
+        <p class="brand-sub">Tu tienda virtual en minutos</p>
+      </div>
+    </div>
+    <a href="/" class="link-inicio">← Inicio</a>
+  </header>
+
+  <section class="hero">
+    <div class="hero-emoji">🚀</div>
+    <h2>Crea tu tienda virtual</h2>
+    <p>Sube tus productos, comparte el link y recibe pedidos por WhatsApp</p>
+  </section>
+
+  <section class="benefits">
+    <div class="benefit-card"><span>🛒</span><p>Carrito de compras</p></div>
+    <div class="benefit-card"><span>💬</span><p>Pedidos por WhatsApp</p></div>
+    <div class="benefit-card"><span>✅</span><p>100% gratis</p></div>
+  </section>
+
+  <main class="form-wrap">
+    <form id="formCrearTienda" class="card-form">
+      <h3>📝 Datos de tu negocio</h3>
+
+      <label for="nombre">Nombre del negocio *</label>
+      <input type="text" id="nombre" name="nombre" placeholder="Ej: Joyas Esmeraldas, Ropa Linda, etc." required>
+
+      <label for="whatsapp">Tu número de WhatsApp *</label>
+      <input type="tel" id="whatsapp" name="whatsapp" placeholder="Ej: 3001234567" required>
+      <p class="hint">Sin el +57, solo los 10 dígitos</p>
+
+      <label for="categoria">Categoría del negocio</label>
+      <select id="categoria" name="categoria">
+        <option value="General">General</option>
+        <option value="Joyería">Joyería</option>
+        <option value="Ropa">Ropa</option>
+        <option value="Calzado">Calzado</option>
+        <option value="Belleza">Belleza</option>
+        <option value="Hogar">Hogar</option>
+        <option value="Tecnología">Tecnología</option>
+        <option value="Comida">Comida</option>
+      </select>
+
+      <label for="descripcion">Descripción breve (opcional)</label>
+      <textarea id="descripcion" name="descripcion" placeholder="Cuéntale a tus clientes qué vendes..."></textarea>
+
+      <label for="password">Contraseña de acceso *</label>
+      <input type="password" id="password" name="password" placeholder="Mínimo 4 caracteres" minlength="4" required>
+      <p class="hint">La usarás para entrar al panel de tu tienda</p>
+
+      <p id="formError" class="form-error"></p>
+
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Crear mi tienda</button>
+    </form>
+  </main>
+
+  <script src="/js/crear-tienda.js"></script>
+</body>
+</html>

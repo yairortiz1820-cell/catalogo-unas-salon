@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tienda — CatalogoYa</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="tienda-header">
+    <div class="tienda-brand">
+      <span class="tienda-logo" id="tiendaLogo">🏪</span>
+      <div>
+        <h1 id="tiendaNombre">Cargando...</h1>
+        <p class="tienda-categoria" id="tiendaCategoria"></p>
+      </div>
+    </div>
+    <button class="cart-btn" id="btnCarrito" aria-label="Ver carrito">
+      🛒
+      <span class="cart-count" id="cartCount" hidden>0</span>
+    </button>
+  </header>
+
+  <section class="banner">
+    <h2 id="bannerNombre"></h2>
+    <p id="bannerDescripcion"></p>
+  </section>
+
+  <div class="search-wrap">
+    <input type="text" id="buscarInput" class="search-input" placeholder="🔍 Buscar productos...">
+  </div>
+
+  <div class="chips-wrap" id="chipsCategorias"></div>
+
+  <main class="productos-grid" id="productosGrid"></main>
+  <p class="vacio" id="vacioMsg" hidden>No hay productos que coincidan con tu búsqueda.</p>
+
+  <div class="overlay" id="cartOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3>🛒 Tu Carrito</h3>
+      <div class="cart-header-actions">
+        <button id="btnVaciar" class="link-btn">Vaciar</button>
+        <button id="btnCerrarCarrito" class="close-btn" aria-label="Cerrar">✕</button>
+      </div>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-total">
+      <span>Total estimado</span>
+      <strong id="cartTotal">$ 0</strong>
+    </div>
+    <div class="toast" id="cartToast" hidden></div>
+    <button class="btn btn-primary btn-block" id="btnWhatsapp">💬 Enviar pedido por WhatsApp</button>
+    <button class="btn btn-secondary btn-block" id="btnCompartir">📤 Compartir en mensajes</button>
+  </aside>
+
+  <script src="/js/tienda.js"></script>
+</body>
+</html>

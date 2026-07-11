@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel admin — CatalogoYa</title>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <section id="loginView" class="login-wrap">
+    <form id="formLogin" class="card-form">
+      <h3>🔐 Ingresar a tu tienda</h3>
+      <label for="loginPassword">Contraseña</label>
+      <input type="password" id="loginPassword" placeholder="Contraseña de tu tienda" required>
+      <p id="loginError" class="form-error"></p>
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Entrar</button>
+    </form>
+  </section>
+
+  <div id="adminView" hidden>
+    <header class="admin-header">
+      <div>
+        <h1 id="adminTiendaNombre">Panel de administración</h1>
+        <p>Panel de administración</p>
+      </div>
+      <a id="verTiendaLink" href="#" class="btn btn-light" target="_blank">👁 Ver tienda</a>
+    </header>
+
+    <section class="stats-row">
+      <div class="stat-box"><strong id="statTotal">0</strong><span>PRODUCTOS</span></div>
+      <div class="stat-box"><strong id="statActivos">0</strong><span>ACTIVOS</span></div>
+      <div class="stat-box"><strong id="statOcultos">0</strong><span>OCULTOS</span></div>
+    </section>
+
+    <section class="link-box">
+      <p class="link-label">🔗 TU ENLACE DE TIENDA</p>
+      <div class="link-row">
+        <span id="tiendaLinkTexto" class="link-texto"></span>
+        <button id="btnCopiarLink" class="btn btn-light-sm">Copiar</button>
+        <button id="btnCompartirLink" class="btn btn-primary-sm">WA</button>
+      </div>
+    </section>
+
+    <section class="productos-admin">
+      <div class="productos-admin-header">
+        <h2>Mis productos</h2>
+        <button id="btnAgregarProducto" class="btn btn-primary">+ Agregar</button>
+      </div>
+      <div id="listaProductos"></div>
+    </section>
+  </div>
+
+  <div class="overlay" id="modalOverlay"></div>
+  <div class="modal" id="modalProducto">
+    <h3 id="modalTitulo">Agregar producto</h3>
+    <form id="formProducto">
+      <input type="hidden" id="productoId">
+      <label for="pNombre">Nombre *</label>
+      <input type="text" id="pNombre" required>
+      <label for="pDescripcion">Descripción</label>
+      <textarea id="pDescripcion"></textarea>
+      <label for="pPrecio">Precio *</label>
+      <input type="number" id="pPrecio" min="0" required>
+      <label for="pCategoria">Categoría</label>
+      <input type="text" id="pCategoria" placeholder="Ej: Aretes, Pulseras...">
+      <label for="pImagen">Imagen (URL)</label>
+      <input type="url" id="pImagen" placeholder="https://...jpg">
+      <div class="modal-actions">
+        <button type="button" id="btnCancelarModal" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="/js/admin-tienda.js"></script>
+</body>
+</html>

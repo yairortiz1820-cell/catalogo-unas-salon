@@ -1,152 +1,170 @@
-// Servidor demo sin MongoDB - datos en memoria
+// Servidor demo sin MongoDB - datos en memoria, para preview rápido
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
 const path = require('path');
 
 const app = express();
-const __dir = path.dirname(require.resolve('./server-demo.js'));
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const JWT_SECRET = process.env.JWT_SECRET || 'demo_secret_key';
+const RESERVADOS = new Set(['admin', 'api', 'crear-tienda', 'tienda', 'home', 'uploads', 'public']);
+
+function slugify(texto) {
+  return texto.toString().normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
 
 // ─── DATOS EN MEMORIA ───────────────────────────────────────────────
-let servicios = [
-  { _id: '1', nombre: 'Uñas Acrílicas Clásicas', descripcion: 'Extensión de uñas acrílicas con acabado natural o con color. Resistentes y duraderas por hasta 3 semanas.', precio: 65000, duracion: 90, categoria: 'Acrílicas', imagen: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400', calificacion_promedio: 4.8, total_calificaciones: 24, activo: true },
-  { _id: '2', nombre: 'Manicure Tradicional', descripcion: 'Limpieza, corte, limado y esmaltado de uñas naturales. Incluye exfoliación de manos.', precio: 25000, duracion: 45, categoria: 'Manicure', imagen: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=400', calificacion_promedio: 4.5, total_calificaciones: 18, activo: true },
-  { _id: '3', nombre: 'Pedicure Spa Completo', descripcion: 'Baño de pies, exfoliación, hidratación profunda, corte y esmaltado. El mejor relax para tus pies.', precio: 45000, duracion: 60, categoria: 'Pedicure', imagen: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400', calificacion_promedio: 4.9, total_calificaciones: 31, activo: true },
-  { _id: '4', nombre: 'Uñas en Gel UV', descripcion: 'Aplicación de gel UV para mayor resistencia y brillo. Duración de hasta 4 semanas sin astillarse.', precio: 55000, duracion: 75, categoria: 'Gel', imagen: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400', calificacion_promedio: 4.7, total_calificaciones: 15, activo: true },
-  { _id: '5', nombre: 'Nail Art & Diseños', descripcion: 'Diseños artísticos personalizados: flores, líneas, glitter, degradados y mucho más. Cada uña una obra de arte.', precio: 80000, duracion: 120, categoria: 'Diseño', imagen: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400', calificacion_promedio: 5.0, total_calificaciones: 12, activo: true },
-  { _id: '6', nombre: 'Spa de Manos Premium', descripcion: 'Tratamiento completo: exfoliación, baño de parafina, masaje con aceites esenciales y manicure.', precio: 70000, duracion: 90, categoria: 'Spa', imagen: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=400', calificacion_promedio: 4.6, total_calificaciones: 9, activo: true }
+let tiendas = [
+  {
+    _id: 't1', slug: 'joyas-esmeraldas', nombre: 'Joyas Esmeraldas', whatsapp: '3001234567',
+    categoria: 'Joyería', descripcion: 'Piezas artesanales con esmeraldas colombianas',
+    passwordHash: bcrypt.hashSync('demo1234', 10), logoEmoji: '💎', activa: true
+  },
+  {
+    _id: 't2', slug: 'ropa-linda', nombre: 'Ropa Linda', whatsapp: '3007654321',
+    categoria: 'Ropa', descripcion: 'Moda femenina a la medida de tu estilo',
+    passwordHash: bcrypt.hashSync('demo1234', 10), logoEmoji: '👗', activa: true
+  }
 ];
 
-let calificaciones = [
-  { _id: 'c1', servicio_id: '1', cliente_nombre: 'María García', estrellas: 5, comentario: '¡Quedé encantada! Muy profesional y duradero.', estado: 'aprobada', respuesta_admin: '' },
-  { _id: 'c2', servicio_id: '1', cliente_nombre: 'Laura P.', estrellas: 5, comentario: 'El mejor servicio de la ciudad, súper recomendado.', estado: 'aprobada', respuesta_admin: '' },
-  { _id: 'c3', servicio_id: '2', cliente_nombre: 'Ana Rodríguez', estrellas: 4, comentario: 'Muy buen servicio, precios justos y ambiente agradable.', estado: 'aprobada', respuesta_admin: '' },
-  { _id: 'c4', servicio_id: '3', cliente_nombre: 'Carolina M.', estrellas: 5, comentario: 'El pedicure spa es una experiencia increíble. Mis pies quedaron perfectos.', estado: 'aprobada', respuesta_admin: '' },
-  { _id: 'c5', servicio_id: '5', cliente_nombre: 'Valentina L.', estrellas: 5, comentario: 'Los diseños son únicos y creativos. Siempre recibo cumplidos.', estado: 'aprobada', respuesta_admin: '' }
+let productos = [
+  { _id: 'p1', tiendaId: 't1', nombre: 'Conjunto Floral Aretes + Dije', descripcion: 'Set completo en plata 925 con esmeralda central', precio: 195000, categoria: 'Conjuntos', imagen: 'https://images.unsplash.com/photo-1599459183200-59c7687a0275?w=400', visible: true },
+  { _id: 'p2', tiendaId: 't1', nombre: 'Pulsera Triple Estación', descripcion: 'Plata 925 con 3 estaciones de esmeraldas', precio: 245000, categoria: 'Pulseras', imagen: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400', visible: true },
+  { _id: 'p3', tiendaId: 't1', nombre: 'Aretes Lazo Plata 925', descripcion: 'Diseño delicado en forma de lazo con esmeralda', precio: 125000, categoria: 'Aretes', imagen: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400', visible: true },
+  { _id: 'p4', tiendaId: 't1', nombre: 'Aretes Corazón Abierto', descripcion: 'Aretes en plata con esmeralda incrustada', precio: 165000, categoria: 'Aretes', imagen: 'https://images.unsplash.com/photo-1602751584547-8564cfcb5b1d?w=400', visible: true },
+  { _id: 'p5', tiendaId: 't1', nombre: 'Dije Minimalista Oro Laminado', descripcion: 'Dije delicado bañado en oro con esmeralda', precio: 175000, categoria: 'Dijes', imagen: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400', visible: true },
+  { _id: 'p6', tiendaId: 't2', nombre: 'Vestido Midi Floral', descripcion: 'Vestido midi estampado, tela fresca ideal para el día', precio: 89000, categoria: 'Vestidos', imagen: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400', visible: true },
+  { _id: 'p7', tiendaId: 't2', nombre: 'Blusa Manga Larga Satinada', descripcion: 'Blusa elegante en tela satinada, varios colores', precio: 65000, categoria: 'Blusas', imagen: 'https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=400', visible: true },
+  { _id: 'p8', tiendaId: 't2', nombre: 'Jean Tiro Alto Clásico', descripcion: 'Jean tiro alto, corte recto, en denim resistente', precio: 95000, categoria: 'Jeans', imagen: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400', visible: true }
 ];
 
-const adminUser = { email: 'admin@salon.com', password: 'admin123', nombre: 'Administrador' };
-let nextId = 10;
+let nextId = 100;
 
-const upload = multer({ dest: 'uploads/' });
+function firmarToken(tienda) {
+  return jwt.sign({ tiendaId: tienda._id, slug: tienda.slug, nombre: tienda.nombre }, JWT_SECRET, { expiresIn: '8h' });
+}
 
-// AUTH
-function authMiddleware(req, res, next) {
+function tenantAuth(req, res, next) {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'Token requerido' });
-  try { req.admin = jwt.verify(token, JWT_SECRET); next(); }
+  try { req.tienda = jwt.verify(token, JWT_SECRET); next(); }
   catch { res.status(401).json({ error: 'Token inválido' }); }
 }
 
-app.post('/api/auth/login', async (req, res) => {
-  const { email, password } = req.body;
-  if (email === adminUser.email && password === adminUser.password) {
-    const token = jwt.sign({ email, nombre: adminUser.nombre }, JWT_SECRET, { expiresIn: '8h' });
-    return res.json({ token, nombre: adminUser.nombre });
+function verifyTenantSlug(req, res, next) {
+  if (req.tienda.slug !== req.params.slug) return res.status(403).json({ error: 'No autorizado para esta tienda' });
+  next();
+}
+
+function publicaTienda(t) {
+  return { slug: t.slug, nombre: t.nombre, categoria: t.categoria, descripcion: t.descripcion, whatsapp: t.whatsapp, logoEmoji: t.logoEmoji };
+}
+
+// ─── TIENDAS ───────────────────────────────────────────────
+app.post('/api/tiendas', async (req, res) => {
+  const { nombre, whatsapp, categoria, descripcion, password } = req.body;
+  if (!nombre || !whatsapp || !password) return res.status(400).json({ error: 'Nombre, WhatsApp y contraseña son requeridos' });
+  if (password.length < 4) return res.status(400).json({ error: 'La contraseña debe tener al menos 4 caracteres' });
+
+  let base = slugify(nombre) || 'tienda';
+  let slug = base;
+  let intentos = 0;
+  while (RESERVADOS.has(slug) || tiendas.some(t => t.slug === slug)) {
+    slug = `${base}-${Math.random().toString(36).slice(2, 6)}`;
+    if (++intentos > 5) break;
   }
-  res.status(401).json({ error: 'Credenciales incorrectas' });
+
+  const tienda = {
+    _id: String(++nextId), nombre, whatsapp, categoria: categoria || 'General', descripcion: descripcion || '',
+    slug, passwordHash: bcrypt.hashSync(password, 10), logoEmoji: '🏪', activa: true
+  };
+  tiendas.push(tienda);
+  res.status(201).json({ token: firmarToken(tienda), tienda: publicaTienda(tienda) });
 });
 
-// SERVICIOS
-app.get('/api/servicios', (req, res) => {
-  let lista = servicios.filter(s => s.activo);
-  if (req.query.categoria && req.query.categoria !== 'Todos') lista = lista.filter(s => s.categoria === req.query.categoria);
-  if (req.query.buscar) lista = lista.filter(s => s.nombre.toLowerCase().includes(req.query.buscar.toLowerCase()));
+app.post('/api/tiendas/login', async (req, res) => {
+  const { slug, password } = req.body;
+  const tienda = tiendas.find(t => t.slug === slug);
+  if (!tienda || !bcrypt.compareSync(password, tienda.passwordHash)) return res.status(401).json({ error: 'Credenciales incorrectas' });
+  res.json({ token: firmarToken(tienda), tienda: publicaTienda(tienda) });
+});
+
+app.get('/api/tiendas/:slug/stats', tenantAuth, verifyTenantSlug, (req, res) => {
+  const mios = productos.filter(p => p.tiendaId === req.tienda.tiendaId);
+  const activos = mios.filter(p => p.visible).length;
+  res.json({ totalProductos: mios.length, activos, ocultos: mios.length - activos });
+});
+
+app.get('/api/tiendas/:slug', (req, res) => {
+  const tienda = tiendas.find(t => t.slug === req.params.slug && t.activa);
+  if (!tienda) return res.status(404).json({ error: 'Tienda no encontrada' });
+  res.json(publicaTienda(tienda));
+});
+
+// ─── PRODUCTOS ───────────────────────────────────────────────
+app.get('/api/tiendas/:slug/productos/admin', tenantAuth, verifyTenantSlug, (req, res) => {
+  res.json(productos.filter(p => p.tiendaId === req.tienda.tiendaId));
+});
+
+app.get('/api/tiendas/:slug/productos/:id', (req, res) => {
+  const p = productos.find(p => p._id === req.params.id && p.visible);
+  if (!p) return res.status(404).json({ error: 'Producto no encontrado' });
+  res.json(p);
+});
+
+app.get('/api/tiendas/:slug/productos', (req, res) => {
+  const tienda = tiendas.find(t => t.slug === req.params.slug);
+  if (!tienda) return res.status(404).json({ error: 'Tienda no encontrada' });
+  let lista = productos.filter(p => p.tiendaId === tienda._id && p.visible);
+  if (req.query.categoria && req.query.categoria !== 'Todos') lista = lista.filter(p => p.categoria === req.query.categoria);
+  if (req.query.buscar) lista = lista.filter(p => p.nombre.toLowerCase().includes(req.query.buscar.toLowerCase()));
   res.json(lista);
 });
 
-app.get('/api/servicios/admin/todos', authMiddleware, (req, res) => res.json(servicios));
-
-app.get('/api/servicios/:id', (req, res) => {
-  const s = servicios.find(s => s._id === req.params.id);
-  if (!s) return res.status(404).json({ error: 'No encontrado' });
-  res.json(s);
-});
-
-app.post('/api/servicios', authMiddleware, upload.single('imagen'), (req, res) => {
-  const { nombre, descripcion, precio, duracion, categoria } = req.body;
-  if (!nombre || !descripcion || !precio || !duracion || !categoria) return res.status(400).json({ error: 'Campos requeridos' });
-  const nuevo = { _id: String(++nextId), nombre, descripcion, precio: parseFloat(precio), duracion: parseInt(duracion), categoria, imagen: req.file ? `/uploads/${req.file.filename}` : '', calificacion_promedio: 0, total_calificaciones: 0, activo: true };
-  servicios.push(nuevo);
+app.post('/api/tiendas/:slug/productos', tenantAuth, verifyTenantSlug, (req, res) => {
+  const { nombre, descripcion, precio, categoria, imagen } = req.body;
+  if (!nombre || precio === undefined) return res.status(400).json({ error: 'Nombre y precio son requeridos' });
+  const nuevo = {
+    _id: String(++nextId), tiendaId: req.tienda.tiendaId, nombre, descripcion: descripcion || '',
+    precio: parseFloat(precio), categoria: categoria || 'General', imagen: imagen || '', visible: true
+  };
+  productos.push(nuevo);
   res.status(201).json(nuevo);
 });
 
-app.put('/api/servicios/:id', authMiddleware, upload.single('imagen'), (req, res) => {
-  const idx = servicios.findIndex(s => s._id === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: 'No encontrado' });
-  const { nombre, descripcion, precio, duracion, categoria, activo } = req.body;
-  servicios[idx] = { ...servicios[idx], nombre, descripcion, precio: parseFloat(precio), duracion: parseInt(duracion), categoria, activo: activo === 'true' };
-  if (req.file) servicios[idx].imagen = `/uploads/${req.file.filename}`;
-  res.json(servicios[idx]);
+app.put('/api/tiendas/:slug/productos/:id', tenantAuth, verifyTenantSlug, (req, res) => {
+  const idx = productos.findIndex(p => p._id === req.params.id && p.tiendaId === req.tienda.tiendaId);
+  if (idx === -1) return res.status(404).json({ error: 'Producto no encontrado' });
+  const { nombre, descripcion, precio, categoria, imagen, visible } = req.body;
+  productos[idx] = { ...productos[idx], nombre, descripcion, precio: parseFloat(precio), categoria, imagen, visible: visible !== undefined ? visible : productos[idx].visible };
+  res.json(productos[idx]);
 });
 
-app.delete('/api/servicios/:id', authMiddleware, (req, res) => {
-  servicios = servicios.filter(s => s._id !== req.params.id);
+app.patch('/api/tiendas/:slug/productos/:id/visibilidad', tenantAuth, verifyTenantSlug, (req, res) => {
+  const p = productos.find(p => p._id === req.params.id && p.tiendaId === req.tienda.tiendaId);
+  if (!p) return res.status(404).json({ error: 'Producto no encontrado' });
+  p.visible = !p.visible;
+  res.json(p);
+});
+
+app.delete('/api/tiendas/:slug/productos/:id', tenantAuth, verifyTenantSlug, (req, res) => {
+  const antes = productos.length;
+  productos = productos.filter(p => !(p._id === req.params.id && p.tiendaId === req.tienda.tiendaId));
+  if (productos.length === antes) return res.status(404).json({ error: 'Producto no encontrado' });
   res.json({ mensaje: 'Eliminado' });
 });
 
-// CALIFICACIONES
-app.get('/api/calificaciones/servicio/:id', (req, res) => {
-  res.json(calificaciones.filter(c => c.servicio_id === req.params.id && c.estado === 'aprobada'));
-});
-
-app.get('/api/calificaciones/admin/todas', authMiddleware, (req, res) => {
-  const cals = calificaciones.map(c => {
-    const s = servicios.find(s => s._id === c.servicio_id);
-    return { ...c, servicio_id: { _id: c.servicio_id, nombre: s?.nombre || '–' } };
-  });
-  res.json(cals);
-});
-
-app.post('/api/calificaciones', (req, res) => {
-  const { servicio_id, cliente_nombre, estrellas, comentario } = req.body;
-  if (!servicio_id || !cliente_nombre || !estrellas) return res.status(400).json({ error: 'Campos requeridos' });
-  calificaciones.push({ _id: String(++nextId), servicio_id, cliente_nombre, estrellas: parseInt(estrellas), comentario: comentario || '', estado: 'pendiente', respuesta_admin: '' });
-  res.status(201).json({ mensaje: 'Calificación enviada, pendiente de aprobación' });
-});
-
-app.put('/api/calificaciones/:id', authMiddleware, (req, res) => {
-  const idx = calificaciones.findIndex(c => c._id === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: 'No encontrada' });
-  calificaciones[idx] = { ...calificaciones[idx], estado: req.body.estado, respuesta_admin: req.body.respuesta_admin || '' };
-  const aprobadas = calificaciones.filter(c => c.servicio_id === calificaciones[idx].servicio_id && c.estado === 'aprobada');
-  const sIdx = servicios.findIndex(s => s._id === calificaciones[idx].servicio_id);
-  if (sIdx !== -1) {
-    servicios[sIdx].calificacion_promedio = aprobadas.length ? Math.round(aprobadas.reduce((a, c) => a + c.estrellas, 0) / aprobadas.length * 10) / 10 : 0;
-    servicios[sIdx].total_calificaciones = aprobadas.length;
-  }
-  res.json(calificaciones[idx]);
-});
-
-app.delete('/api/calificaciones/:id', authMiddleware, (req, res) => {
-  calificaciones = calificaciones.filter(c => c._id !== req.params.id);
-  res.json({ mensaje: 'Eliminada' });
-});
-
-// STATS
-app.get('/api/stats', authMiddleware, (req, res) => {
-  res.json({
-    totalServicios: servicios.length,
-    serviciosActivos: servicios.filter(s => s.activo).length,
-    totalCalificaciones: calificaciones.filter(c => c.estado === 'aprobada').length,
-    calificacionesPendientes: calificaciones.filter(c => c.estado === 'pendiente').length,
-    promedioGeneral: (calificaciones.filter(c => c.estado === 'aprobada').reduce((a, c) => a + c.estrellas, 0) / (calificaciones.filter(c => c.estado === 'aprobada').length || 1)).toFixed(1)
-  });
-});
-
-app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
-app.get('*', (req, res) => {
-  const f = path.join(__dirname, 'public', 'index.html');
-  res.sendFile(f);
-});
+// ─── PÁGINAS ───────────────────────────────────────────────
+app.get('/crear-tienda', (req, res) => res.sendFile(path.join(__dirname, 'public', 'crear-tienda.html')));
+app.get('/tienda/:slug', (req, res) => res.sendFile(path.join(__dirname, 'public', 'tienda.html')));
+app.get('/admin/:slug', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-tienda.html')));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'home.html')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor demo corriendo en http://localhost:${PORT}`));

@@ -1,69 +1,41 @@
-# 💅 Salón de Uñas Glamour — App Web Completa
+# 🏬 CatalogoYa — Plataforma multi-tienda
 
-## Requisitos previos
+Crea tu tienda virtual en minutos: sube tus productos, comparte el link y recibe pedidos por WhatsApp.
+
+## Requisitos
+
 - Node.js 18+
-- MongoDB (local o Atlas)
+- MongoDB (para la versión de producción con `server.js`/`api/index.js`)
 
 ## Instalación
 
-```bash
-cd catalogo_unas
+```
 npm install
 ```
 
 ## Configuración
 
-Edita el archivo `.env` con tus datos:
-```
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/salon_unas
-JWT_SECRET=tu_clave_secreta
-WHATSAPP_NUMBER=573001234567   ← Cambia por tu número
-SALON_NAME=Glamour Nails
-```
+Copia `.env.example` a `.env` y define:
 
-## Ejecutar
+- `PORT`
+- `MONGODB_URI`
+- `JWT_SECRET`
 
-```bash
-node server.js
-```
+## Ejecución
 
-- 🌐 App cliente: http://localhost:3000
-- 👑 Panel admin: http://localhost:3000/admin
-- 📧 Admin: admin@salon.com
-- 🔑 Contraseña: admin123
+- `node server.js` — servidor real con MongoDB.
+- `node server-demo.js` — servidor de preview con datos en memoria (sin necesidad de MongoDB), incluye 2 tiendas de ejemplo.
 
 ## Estructura
-```
-catalogo_unas/
-├── server.js              ← Servidor principal
-├── .env                   ← Variables de entorno
-├── src/
-│   ├── models/            ← Modelos MongoDB
-│   ├── routes/            ← Rutas API
-│   └── middleware/        ← Auth JWT
-├── public/
-│   ├── index.html         ← Página cliente
-│   ├── admin.html         ← Panel admin
-│   ├── css/               ← Estilos
-│   └── js/                ← JavaScript
-└── uploads/               ← Imágenes subidas
-```
 
-## API Endpoints
+- `public/home.html` — landing con CTA a crear tienda.
+- `public/crear-tienda.html` — formulario de registro de una tienda nueva.
+- `public/tienda.html` — storefront público (`/tienda/:slug`), con carrito y checkout por WhatsApp.
+- `public/admin-tienda.html` — panel de administración de una tienda (`/admin/:slug`).
+- `src/models` — modelos Mongoose (`Tienda`, `Producto`).
+- `src/routes` — rutas de la API (`tiendas`, `productos`).
+- `src/middleware` — autenticación por tienda y aislamiento multi-tenant.
 
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| POST | /api/auth/login | Login admin |
-| GET | /api/servicios | Servicios activos (público) |
-| POST | /api/servicios | Crear servicio (admin) |
-| PUT | /api/servicios/:id | Editar servicio (admin) |
-| DELETE | /api/servicios/:id | Eliminar servicio (admin) |
-| GET | /api/calificaciones/servicio/:id | Calificaciones de servicio |
-| POST | /api/calificaciones | Enviar calificación |
-| GET | /api/stats | Estadísticas (admin) |
+## Despliegue
 
-## Personalización
-- Cambia `WHATSAPP_NUMBER` en `.env` por tu número real
-- Actualiza los datos de contacto en `public/index.html` (footer)
-- Modifica colores en `public/css/styles.css` (variables CSS)
+Configurado para Vercel vía `vercel.json` (`api/index.js`).
